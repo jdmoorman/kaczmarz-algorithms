@@ -11,4 +11,6 @@ __license__ = "MIT"
 __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
-from .example import Example  # noqa: F401
+from . import selection
+
+__all__ = ["selection"]
