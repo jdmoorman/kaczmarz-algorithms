@@ -1,5 +1,6 @@
-import kaczmarz_algorithms  # noqa: F401
+from kaczmarz_algorithms import Example
 
 
 def test_example():
-    assert 1 == 1
+    e = Example()
+    assert e.get_value() == 10

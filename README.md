@@ -2,8 +2,8 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
-
-Variants of the Kaczmarz algorithm for solving linear systems in Python.
+[![Build Status](https://github.com/jdmoorman/kaczmarz-algorithms/workflows/CI/badge.svg)](https://github.com/jdmoorman/kaczmarz-algorithms/actions)
+[![Code Coverage](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms/branch/master/graph/badge.svg)](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)Variants of the Kaczmarz algorithm for solving linear systems in Python.
 
 ---
 
