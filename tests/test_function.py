@@ -1,4 +1,4 @@
-from kaczmarz_algorithms import Example
+from kaczmarz import Example
 
 
 def test_example():

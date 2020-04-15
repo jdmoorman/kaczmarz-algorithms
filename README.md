@@ -8,12 +8,12 @@
 ---
 
 ## Installation
-**Stable Release:** `pip install kaczmarz_algorithms`<br>
+**Stable Release:** `pip install kaczmarz-algorithms`<br>
 **Development Head:** `pip install git+https://github.com/jdmoorman/kaczmarz-algorithms.git`
 
 ## Quick Start
 ```python
->>> from kaczmarz_algorithms import Example
+>>> from kaczmarz import Example
 >>> a = Example()
 >>> a.get_value()
 10

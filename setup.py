@@ -59,16 +59,13 @@ setup(
         "Topic :: Scientific/Engineering",
     ],
     description="Variants of the Kaczmarz algorithm for solving linear systems.",
-    entry_points={
-        "console_scripts": ["my_example=kaczmarz_algorithms.bin.my_example:main"]
-    },
     install_requires=requirements,
     license="MIT",
     long_description=readme,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    keywords="kaczmarz_algorithms",
-    name="kaczmarz_algorithms",
+    keywords="kaczmarz",
+    name="kaczmarz-algorithms",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     python_requires=">=3.6",

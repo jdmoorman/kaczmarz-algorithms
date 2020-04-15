@@ -16,5 +16,3 @@ recursive-include docs *.py
 recursive-include docs *.rst
 include docs/Makefile docs/make.bat
 prune docs/_build
-
-graft src/kaczmarz_algorithms/data

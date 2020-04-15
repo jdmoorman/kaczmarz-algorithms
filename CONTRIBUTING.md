@@ -4,20 +4,20 @@ Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
 
 ## Get Started!
-Ready to contribute? Here's how to set up `kaczmarz_algorithms` for local development.
+Ready to contribute? Here's how to set up `kaczmarz-algorithms` for local development.
 
-1. Fork the `kaczmarz_algorithms` repo on GitHub.
+1. Fork the `kaczmarz-algorithms` repo on GitHub.
 
 2. Clone your fork locally:
 
     ```bash
-    git clone git@github.com:{your_name_here}/kaczmarz_algorithms.git
+    git clone git@github.com:{your_name_here}/kaczmarz-algorithms.git
     ```
 
 3. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):
 
     ```bash
-    cd kaczmarz_algorithms/
+    cd kaczmarz-algorithms/
     pip install -e .[dev]
     ```
 
