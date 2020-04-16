@@ -12,5 +12,6 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
 from . import selection
+from ._iteration import Iteration
 
-__all__ = ["selection"]
+__all__ = ["selection", "Iteration"]
