@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from kaczmarz import Iteration
+from kaczmarz import Iterates
 from kaczmarz.selection import Cyclic
 
 
@@ -17,7 +17,7 @@ def test_cyclic():
     A = np.eye(3)
     b = np.ones(3)
     x0 = np.zeros(3)
-    iteration = Iteration(A, b, x0, selection_strategy=Cyclic(A))
+    iteration = Iterates(A, b, x0, selection_strategy=Cyclic(A))
     iterator = iter(iteration)
     assert [0, 0, 0] == list(next(iterator))
     assert [1, 0, 0] == list(next(iterator))

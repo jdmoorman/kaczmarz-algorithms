@@ -4,7 +4,7 @@ import numpy as np
 from kaczmarz.selection import Cyclic as _DefaultSelectionStrategy
 
 
-class Iteration:
+class Iterates:
     def __init__(
         self,
         A,
