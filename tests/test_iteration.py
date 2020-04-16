@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from kaczmarz import Iterates
+from kaczmarz import iterates
 from kaczmarz.selection import Cyclic
 
 
@@ -32,12 +32,12 @@ def terminates_in_one_iteration(iteration):
 
 def test_initial_guess(A, b):
     # Does the default initial iterate have the right shape?
-    iteration = Iterates(A, b)
+    iteration = iterates(A, b)
     assert (3,) == next(iter(iteration)).shape
 
     # Does the supplied initial iterate get used correctly?
     x0 = np.array([1, 2, 3])
-    iteration = Iterates(A, b, x0)
+    iteration = iterates(A, b, x0)
     assert list(x0) == list(next(iter(iteration)))
 
 
@@ -45,18 +45,18 @@ def test_maxiter(A, b):
     # This is not the exact solution.
     x0 = np.array([0, 0, 0])
 
-    iteration = Iterates(A, b, x0, maxiter=0)
+    iteration = iterates(A, b, x0, maxiter=0)
     terminates_in_one_iteration(iteration)
 
 
 def test_tolerance(A, b, x_exact):
     # If we start at the answer, we're done.
-    iteration = Iterates(A, b, x_exact)
+    iteration = iterates(A, b, x_exact)
     terminates_in_one_iteration(iteration)
 
     # Initial residual has norm 1.
     x0 = np.array([1, 0, 0])
-    iteration = Iterates(A, b, x0, tol=1.01)
+    iteration = iterates(A, b, x0, tol=1.01)
     terminates_in_one_iteration(iteration)
 
 
@@ -64,7 +64,7 @@ def test_row_norms_squared(A, b):
     """Passing row norms 2x too large causes steps to be half as big."""
     x0 = np.array([0, 0, 0])
     fake_row_norms_squared = np.array([2, 2])  # They should be [1, 1]
-    iteration = Iterates(
+    iteration = iterates(
         A, b, x0, row_norms_squared=fake_row_norms_squared, selection_strategy=Cyclic(A)
     )
     iterator = iter(iteration)
@@ -81,7 +81,7 @@ def test_callback(A, b):
     def callback(xk):
         actual_iterates.append(list(xk))
 
-    iterator = iter(Iterates(A, b, x0, callback=callback))
+    iterator = iter(iterates(A, b, x0, callback=callback))
     next(iterator)
     assert actual_iterates == [[0, 0, 0]]
     next(iterator)
