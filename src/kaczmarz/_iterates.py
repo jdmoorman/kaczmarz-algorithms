@@ -18,22 +18,22 @@ class iterates:
     ):
         # TODO: Check what happens if we don't receive a seed.
         # TODO: Return the initial iterate during __iter__
-        self.A = A
+        self._A = A
         if row_norms_squared is None:
             row_norms_squared = (A ** 2).sum(axis=1)
-        self.row_norms_squared = row_norms_squared
-        self.b = b.ravel()
+        self._row_norms_squared = row_norms_squared
+        self._b = b.ravel()
         if selection_strategy is None:
             selection_strategy = _DefaultSelectionStrategy(A, b, x0)
-        self.selection_strategy = selection_strategy
+        self._selection_strategy = selection_strategy
 
         if x0 is None:
             n_cols = A.shape[1]
             x0 = np.zeros(n_cols)
-        self.x0 = x0.ravel()
-        self.tol = tol
-        self.maxiter = maxiter
-        self.callback = callback
+        self._x0 = x0.ravel()
+        self._tol = tol
+        self._maxiter = maxiter
+        self._callback = callback
         self._k = -1
         self._xk = None
 
@@ -45,8 +45,8 @@ class iterates:
         self._xk = self.next_iterate()
         self._k += 1
 
-        if self.callback is not None:
-            self.callback(self._xk.copy())
+        if self._callback is not None:
+            self._callback(self._xk.copy())
 
         return self._xk.copy()
 
@@ -59,12 +59,12 @@ class iterates:
     def next_iterate(self):
         """Apply the Kaczmarz update."""
         if self._xk is None:
-            return self.x0
+            return self._x0
 
-        row_index = self.selection_strategy.next_row_index(self._xk)
-        ai = self.A[row_index]
-        bi = self.b[row_index]
-        ai_norm_squared = self.row_norms_squared[row_index]
+        row_index = self._selection_strategy.next_row_index(self._xk)
+        ai = self._A[row_index]
+        bi = self._b[row_index]
+        ai_norm_squared = self._row_norms_squared[row_index]
         return self._xk + ((bi - ai @ self._xk) / ai_norm_squared) * ai
 
     def stopping_criterion(self):
@@ -78,10 +78,10 @@ class iterates:
         if self._xk is None:
             return False
 
-        if self._k >= self.maxiter:
+        if self._k >= self._maxiter:
             return True
 
-        residual = self.b - self.A @ self._xk
+        residual = self._b - self._A @ self._xk
         squared_residual_norm = (residual ** 2).sum()
-        if squared_residual_norm < self.tol ** 2:
+        if squared_residual_norm < self._tol ** 2:
             return True
