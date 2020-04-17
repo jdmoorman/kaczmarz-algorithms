@@ -5,14 +5,11 @@ from .exceptions import SelectionStrategyNotFoundError
 
 def _selection_strategy_class_from_str(selection_strategy_str):
     try:
-        return getattr(selection, selection_strategy_str)
-    except AttributeError:
-        selection_strategies = [
-            item for item in dir(selection) if not item.startswith("_")
-        ]
+        return selection.strategies[selection_strategy_str]
+    except KeyError:
         raise SelectionStrategyNotFoundError(
             "{} is not a valid selection strategy. Try one of {}.".format(
-                selection_strategy_str, selection_strategies
+                selection_strategy_str, selection.strategies.keys()
             )
         )
 
@@ -32,7 +29,7 @@ def get_selection_strategy(
         Keyword arguments for the selection strategy constructor.
     """
 
-    if not isinstance(selection_strategy, str) and not isinstance(
+    if not isinstance(selection_strategy, str) and not issubclass(
         selection_strategy, SelectionStrategy
     ):
         raise TypeError(

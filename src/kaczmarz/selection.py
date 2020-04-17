@@ -35,3 +35,10 @@ class Cyclic(SelectionStrategy):
         """
         self.row_index = (1 + self.row_index) % self.n_rows
         return self.row_index
+
+
+strategies = {
+    attr_name: value
+    for attr_name, value in vars().items()
+    if not attr_name.startswith("_") and attr_name != "SelectionStrategy"
+}

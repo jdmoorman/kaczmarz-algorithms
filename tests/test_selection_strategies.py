@@ -1,14 +1,21 @@
 import numpy as np
 import pytest
 
-from kaczmarz import iterates
-from kaczmarz.selection import Cyclic
+import kaczmarz
+
+
+def test_all_strategies_usable():
+    A = np.eye(3)
+    b = np.ones(3)
+    for strategy_name, StrategyClass in kaczmarz.selection.strategies.items():
+        kaczmarz.iterates(A, b, selection_strategy=strategy_name)
+        kaczmarz.iterates(A, b, selection_strategy=StrategyClass)
 
 
 def test_cyclic():
     A = np.empty((2, 3))
     x = np.empty(3)
-    cyclic = Cyclic(A)
+    cyclic = kaczmarz.selection.Cyclic(A)
     assert 0 == cyclic.select_row_index(x)
     assert 1 == cyclic.select_row_index(x)
     assert 0 == cyclic.select_row_index(x)
@@ -17,8 +24,8 @@ def test_cyclic():
     A = np.eye(3)
     b = np.ones(3)
     x0 = np.zeros(3)
-    iteration = iterates(A, b, x0, selection_strategy=Cyclic(A))
-    iterator = iter(iteration)
+    iterates = kaczmarz.iterates(A, b, x0, selection_strategy="Cyclic")
+    iterator = iter(iterates)
     assert [0, 0, 0] == list(next(iterator))
     assert [1, 0, 0] == list(next(iterator))
     assert [1, 1, 0] == list(next(iterator))
