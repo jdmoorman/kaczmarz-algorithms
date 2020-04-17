@@ -16,13 +16,6 @@ Variants of the Kaczmarz algorithm for solving linear systems in Python.
 **Development Head:** `pip install git+https://github.com/jdmoorman/kaczmarz-algorithms.git`
 
 ## Quick Start
-```python
->>> from kaczmarz import Example
->>> a = Example()
->>> a.get_value()
-10
-
-```
 
 ## Citing
 If you use our work in an academic setting, please cite our paper:

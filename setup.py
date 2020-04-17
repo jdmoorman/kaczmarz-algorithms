@@ -26,7 +26,7 @@ dev_requirements = [
     "wheel>=0.33.1",
 ]
 
-requirements = []
+requirements = ["numpy", "scipy"]
 
 extra_requirements = {
     "test": test_requirements,
@@ -76,6 +76,6 @@ setup(
     url="https://github.com/jdmoorman/kaczmarz-algorithms",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="0.0.2",
+    version="0.1.0",
     zip_safe=False,
 )
