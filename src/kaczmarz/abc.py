@@ -18,7 +18,6 @@ class SelectionStrategy(ABC):
         int
             The index of the next row to use.
         """
-        return 0  # This is not a very good selection strategy.
 
     @classmethod
     def __subclasshook__(cls, C):
