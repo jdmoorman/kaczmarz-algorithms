@@ -4,14 +4,6 @@ import pytest
 import kaczmarz
 
 
-def test_all_strategies_usable():
-    A = np.eye(3)
-    b = np.ones(3)
-    for strategy_name, StrategyClass in kaczmarz.selection.strategies.items():
-        kaczmarz.iterates(A, b, selection_strategy=strategy_name)
-        kaczmarz.iterates(A, b, selection_strategy=StrategyClass)
-
-
 def test_cyclic():
     A = np.empty((2, 3))
     x = np.empty(3)

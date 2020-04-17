@@ -3,7 +3,7 @@ from .abc import SelectionStrategy
 from .exceptions import SelectionStrategyNotFoundError
 
 
-def _selection_strategy_class_from_str(selection_strategy_str):
+def selection_strategy_class_from_str(selection_strategy_str):
     try:
         return selection.strategies[selection_strategy_str]
     except KeyError:
@@ -37,6 +37,6 @@ def get_selection_strategy(
         )
 
     if isinstance(selection_strategy, str):
-        selection_strategy = _selection_strategy_class_from_str(selection_strategy)
+        selection_strategy = selection_strategy_class_from_str(selection_strategy)
 
     return selection_strategy(*selection_strategy_args, **selection_strategy_kwargs)

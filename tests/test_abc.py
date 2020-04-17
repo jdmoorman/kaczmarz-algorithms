@@ -4,23 +4,6 @@ from kaczmarz import selection
 from kaczmarz.abc import SelectionStrategy
 
 
-@pytest.fixture()
-def LegitStrategy():
-    class _LegitStrategy:
-        def select_row_index(self, xk):
-            return 1
-
-    return _LegitStrategy
-
-
-@pytest.fixture()
-def NonStrategy():
-    class _NonStrategy:
-        pass
-
-    return _NonStrategy
-
-
 def test_issubclass(LegitStrategy, NonStrategy):
     """A class should be considered a valid selection strategy iff it implements `select_row_index`."""
 
