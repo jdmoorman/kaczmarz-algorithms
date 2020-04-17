@@ -1,7 +1,8 @@
 """Provide a class which implements the Kaczmarz/ART update."""
 import numpy as np
 
-from kaczmarz.selection import Cyclic as _DefaultSelectionStrategy
+from ._get_selection_strategy import get_selection_strategy
+from .abc import SelectionStrategy
 
 
 class iterates:
@@ -13,19 +14,18 @@ class iterates:
         tol=1e-5,
         maxiter=float("inf"),
         callback=None,
-        selection_strategy=None,
         row_norms_squared=None,
+        selection_strategy="Cyclic",
+        **selection_strategy_kwargs
     ):
         # TODO: Check what happens if we don't receive a seed.
         # TODO: Return the initial iterate during __iter__
+        # TODO: Turn this class into a function.
         self._A = A
         if row_norms_squared is None:
             row_norms_squared = (A ** 2).sum(axis=1)
         self._row_norms_squared = row_norms_squared
         self._b = b.ravel()
-        if selection_strategy is None:
-            selection_strategy = _DefaultSelectionStrategy(A, b, x0)
-        self._selection_strategy = selection_strategy
 
         if x0 is None:
             n_cols = A.shape[1]
@@ -34,6 +34,19 @@ class iterates:
         self._tol = tol
         self._maxiter = maxiter
         self._callback = callback
+        if not isinstance(selection_strategy, SelectionStrategy):
+            selection_strategy = get_selection_strategy(
+                selection_strategy,
+                A=A,
+                b=b,
+                x0=x0,
+                tol=tol,
+                maxiter=maxiter,
+                row_norms_squared=row_norms_squared,
+                **selection_strategy_kwargs
+            )
+        self._selection_strategy = selection_strategy
+
         self._k = -1
         self._xk = None
 
@@ -42,8 +55,8 @@ class iterates:
         if self.stopping_criterion():
             raise StopIteration
 
-        self._xk = self.next_iterate()
         self._k += 1
+        self._xk = self.next_iterate()
 
         if self._callback is not None:
             self._callback(self._xk.copy())
@@ -61,7 +74,7 @@ class iterates:
         if self._xk is None:
             return self._x0
 
-        row_index = self._selection_strategy.next_row_index(self._xk)
+        row_index = self._selection_strategy.select_row_index(self._xk)
         ai = self._A[row_index]
         bi = self._b[row_index]
         ai_norm_squared = self._row_norms_squared[row_index]
