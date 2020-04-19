@@ -25,8 +25,8 @@ def test_all_strategies_are_gettable():
     A = np.eye(3)
     b = np.ones(3)
     for strategy_name, StrategyClass in kaczmarz.selection.strategies.items():
-        kaczmarz.iterates(A, b, selection_strategy=strategy_name)
-        kaczmarz.iterates(A, b, selection_strategy=StrategyClass)
+        kaczmarz.Iterates(A, b, selection_strategy=strategy_name)
+        kaczmarz.Iterates(A, b, selection_strategy=StrategyClass)
 
 
 def test_non_strategy_raises_type_error(NonStrategy):

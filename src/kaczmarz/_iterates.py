@@ -5,7 +5,31 @@ from ._get_selection_strategy import get_selection_strategy
 from .abc import SelectionStrategy
 
 
-class iterates:
+class Iterates:
+    """Get the Iterates of the Kaczmarz algorithm.
+
+    Parameters
+    ----------
+    A : (m, n) array
+        The real or complex m-by-n matrix of the linear system.
+    b : (m,) array
+        Right hand side of the linear system.
+    x0 : (n,) array, optional
+        Starting guess for the solution.
+    tol : float, optional
+        Tolerance for convergence, `norm(residual) <= tol`.
+    maxiter : int or float, optional
+        Maximum number of iterations.
+    callback : function, optional
+        User-supplied function to call after each iteration.
+        It is called as callback(xk), where xk is the current solution vector.
+    selection_strategy : str, subclass of SelectionStrategy, or instance of SelectionStrategy, optional
+        The selection strategy for choosing rows at each iteration.
+        See `kaczmarz.selection` for options.
+    selection_strategy_kwargs : dict
+        Additional keyword arguments are passed to the selection strategy.
+    """
+
     def __init__(
         self,
         A,
@@ -47,16 +71,26 @@ class iterates:
             )
         self._selection_strategy = selection_strategy
 
-        self._k = -1
-        self._xk = None
+    @property
+    def ik(self):
+        """The row used on the most recent iteration."""
+        return self._ik
 
     def __next__(self):
-        """Perform an iteration of the Kaczmarz algorithm."""
-        if self.stopping_criterion():
+        """Perform an iteration of the Kaczmarz algorithm.
+
+        Returns
+        -------
+        xk : (n,) array
+            The next iterate of the Kaczmarz algorithm.
+        """
+        if self._stopping_criterion():
+            # TODO: If this is the first iteration, give a warning.
             raise StopIteration
 
         self._k += 1
-        self._xk = self.next_iterate()
+        self._ik = self._selection_strategy.select_row_index(self._xk)
+        self._xk = self._update_iterate(self._ik)
 
         if self._callback is not None:
             self._callback(self._xk.copy())
@@ -64,28 +98,42 @@ class iterates:
         return self._xk.copy()
 
     def __iter__(self):
-        """Start over, back at the initial guess."""
-        self._k = -1
-        self._xk = None
+        """Get an iterator of the Kaczmarz Iterates.
+
+        Returns
+        -------
+        Iterates : iterator
+            An iterator of (n,) arrays representing the Kaczmarz Iterates.
+        """
+        self._k = 0
+        self._ik = -1
+        self._xk = self._x0
         return self
 
-    def next_iterate(self):
-        """Apply the Kaczmarz update."""
-        if self._xk is None:
-            return self._x0
+    def _update_iterate(self, ik):
+        """Apply the Kaczmarz update.
 
-        row_index = self._selection_strategy.select_row_index(self._xk)
-        ai = self._A[row_index]
-        bi = self._b[row_index]
-        ai_norm_squared = self._row_norms_squared[row_index]
+        Parameters
+        ----------
+        ik : int
+            Row index to use for the update.
+
+        Returns
+        -------
+        xk : (n,) array
+            The next iterate
+        """
+        ai = self._A[ik]
+        bi = self._b[ik]
+        ai_norm_squared = self._row_norms_squared[ik]
         return self._xk + ((bi - ai @ self._xk) / ai_norm_squared) * ai
 
-    def stopping_criterion(self):
+    def _stopping_criterion(self):
         """Check if iteration cap or desired accuracy have been reached.
 
         Returns
         -------
-        bool
+        stop : bool
             True if the iteration should be terminated.
         """
         if self._xk is None:
