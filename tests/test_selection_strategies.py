@@ -18,7 +18,6 @@ def test_cyclic():
     x0 = np.zeros(3)
     iterates = kaczmarz.iterates(A, b, x0, selection_strategy="Cyclic")
     iterator = iter(iterates)
-    assert [0, 0, 0] == list(next(iterator))
     assert [1, 0, 0] == list(next(iterator))
     assert [1, 1, 0] == list(next(iterator))
     assert [1, 1, 1] == list(next(iterator))

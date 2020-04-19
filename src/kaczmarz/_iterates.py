@@ -47,12 +47,10 @@ class iterates:
             )
         self._selection_strategy = selection_strategy
 
-        self._k = -1
-        self._xk = None
-
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm."""
         if self.stopping_criterion():
+            # TODO: If this is the first iteration, give a warning.
             raise StopIteration
 
         self._k += 1
@@ -65,15 +63,12 @@ class iterates:
 
     def __iter__(self):
         """Start over, back at the initial guess."""
-        self._k = -1
-        self._xk = None
+        self._k = 0
+        self._xk = self._x0
         return self
 
     def next_iterate(self):
         """Apply the Kaczmarz update."""
-        if self._xk is None:
-            return self._x0
-
         row_index = self._selection_strategy.select_row_index(self._xk)
         ai = self._A[row_index]
         bi = self._b[row_index]

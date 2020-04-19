@@ -22,9 +22,10 @@ def x_exact():
     return np.array([1, 1, 0])
 
 
-def terminates_in_one_iteration(iterates):
+def terminates_in_n_iterations(iterates, n):
     iterator = iter(iterates)
-    next(iterator)
+    for _ in range(n):
+        next(iterator)
     with pytest.raises(StopIteration):
         next(iterator)
 
@@ -41,22 +42,27 @@ def test_initial_guess(A, b):
 
 
 def test_maxiter(A, b):
+    """Passing `maxiter=1` should cause the algorithm to terminate after one iteration."""
+
     # This is not the exact solution.
     x0 = np.array([0, 0, 0])
 
     iterates = kaczmarz.iterates(A, b, x0, maxiter=0)
-    terminates_in_one_iteration(iterates)
+    terminates_in_n_iterations(iterates, 0)
+
+    iterates = kaczmarz.iterates(A, b, x0, maxiter=1)
+    terminates_in_n_iterations(iterates, 1)
 
 
 def test_tolerance(A, b, x_exact):
     # If we start at the answer, we're done.
     iterates = kaczmarz.iterates(A, b, x_exact)
-    terminates_in_one_iteration(iterates)
+    terminates_in_n_iterations(iterates, 0)
 
     # Initial residual has norm 1.
     x0 = np.array([1, 0, 0])
     iterates = kaczmarz.iterates(A, b, x0, tol=1.01)
-    terminates_in_one_iteration(iterates)
+    terminates_in_n_iterations(iterates, 0)
 
 
 def test_row_norms_squared(A, b):
@@ -71,7 +77,6 @@ def test_row_norms_squared(A, b):
         selection_strategy=kaczmarz.selection.Cyclic(A),
     )
     iterator = iter(iterates)
-    assert [0, 0, 0] == list(next(iterator))
     assert [0.5, 0, 0] == list(next(iterator))  # Correct iterate would be [1, 0, 0]
     assert [0.5, 0.5, 0] == list(next(iterator))  # Correct iterate would be [1, 1, 0]
 
@@ -86,8 +91,6 @@ def test_callback(A, b):
 
     iterator = iter(kaczmarz.iterates(A, b, x0, callback=callback))
     next(iterator)
-    assert actual_iterates == [[0, 0, 0]]
+    assert actual_iterates == [[1, 0, 0]]
     next(iterator)
-    assert actual_iterates == [[0, 0, 0], [1, 0, 0]]
-    next(iterator)
-    assert actual_iterates == [[0, 0, 0], [1, 0, 0], [1, 1, 0]]
+    assert actual_iterates == [[1, 0, 0], [1, 1, 0]]
