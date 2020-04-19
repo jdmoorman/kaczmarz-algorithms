@@ -71,6 +71,11 @@ class Iterates:
             )
         self._selection_strategy = selection_strategy
 
+    @property
+    def ik(self):
+        """The row used on the most recent iteration."""
+        return self._ik
+
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm.
 
