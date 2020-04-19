@@ -38,6 +38,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.todo",
     "sphinx_rtd_theme",
+    "m2r",
 ]
 
 # Control napoleon
