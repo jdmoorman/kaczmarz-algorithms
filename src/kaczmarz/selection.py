@@ -11,9 +11,9 @@ class Cyclic(SelectionStrategy):
     A : 2darray
         A matrix whose rows should be cycled through.
     args : tuple
-        Unneeded arguments, likely provided automatically by kaczmarz.iterates.
+        Unneeded arguments, likely provided automatically by kaczmarz.Iterates.
     kwargs : dict
-        Unneeded arguments, likely provided automatically by kaczmarz.iterates.
+        Unneeded arguments, likely provided automatically by kaczmarz.Iterates.
     """
 
     def __init__(self, A, *args, **kwargs):

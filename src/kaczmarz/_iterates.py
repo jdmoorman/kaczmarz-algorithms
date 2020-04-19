@@ -5,8 +5,8 @@ from ._get_selection_strategy import get_selection_strategy
 from .abc import SelectionStrategy
 
 
-class iterates:
-    """Get the iterates of the Kaczmarz algorithm.
+class Iterates:
+    """Get the Iterates of the Kaczmarz algorithm.
 
     Parameters
     ----------
@@ -93,12 +93,12 @@ class iterates:
         return self._xk.copy()
 
     def __iter__(self):
-        """Get an iterator of the Kaczmarz iterates.
+        """Get an iterator of the Kaczmarz Iterates.
 
         Returns
         -------
-        iterates : iterator
-            An iterator of (n,) arrays representing the Kaczmarz iterates.
+        Iterates : iterator
+            An iterator of (n,) arrays representing the Kaczmarz Iterates.
         """
         self._k = 0
         self._ik = -1
