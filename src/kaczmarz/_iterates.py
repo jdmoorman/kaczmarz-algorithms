@@ -49,12 +49,13 @@ class iterates:
 
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm."""
-        if self.stopping_criterion():
+        if self._stopping_criterion():
             # TODO: If this is the first iteration, give a warning.
             raise StopIteration
 
         self._k += 1
-        self._xk = self.next_iterate()
+        self._ik = self._selection_strategy.select_row_index(self._xk)
+        self._xk = self._update_iterate(self._xk, self._ik)
 
         if self._callback is not None:
             self._callback(self._xk.copy())
@@ -64,18 +65,18 @@ class iterates:
     def __iter__(self):
         """Start over, back at the initial guess."""
         self._k = 0
+        self._ik = -1
         self._xk = self._x0
         return self
 
-    def next_iterate(self):
+    def _update_iterate(self, xk, ik):
         """Apply the Kaczmarz update."""
-        row_index = self._selection_strategy.select_row_index(self._xk)
-        ai = self._A[row_index]
-        bi = self._b[row_index]
-        ai_norm_squared = self._row_norms_squared[row_index]
-        return self._xk + ((bi - ai @ self._xk) / ai_norm_squared) * ai
+        ai = self._A[ik]
+        bi = self._b[ik]
+        ai_norm_squared = self._row_norms_squared[ik]
+        return xk + ((bi - ai @ xk) / ai_norm_squared) * ai
 
-    def stopping_criterion(self):
+    def _stopping_criterion(self):
         """Check if iteration cap or desired accuracy have been reached.
 
         Returns
