@@ -1,6 +1,7 @@
 include LICENSE
 include *.md
 include *.yaml
+include *.txt
 include .editorconfig
 include .isort.cfg
 
