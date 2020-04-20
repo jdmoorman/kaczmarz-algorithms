@@ -24,14 +24,17 @@ This is the preferred method to install Kaczmarz Algorithms, as it will always i
 If you don't have [pip](https://pip.pypa.io) installed, these [installation instructions](http://docs.python-guide.org/en/latest/starting/installation/) can guide
 you through the process.
 
+## Usage
+
+```python
+>>> 10
+10
+
+```
+
 
 ## Citing
-If you use our work in an academic setting, please cite our paper:
-
-
-## Documentation
-TODO: readthedocs
-For more information, read the docs.
+If you use our code in an academic setting, please consider citing our code. You can find the appropriate DOI for whichever version you are using on [zenodo.org](https://zenodo.org/badge/latestdoi/255942132).
 
 
 ## Development

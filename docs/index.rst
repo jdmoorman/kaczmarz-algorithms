@@ -4,12 +4,11 @@ Welcome to Kaczmarz Algorithms's documentation!
 .. mdinclude:: ../README.md
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
    Overview <self>
-   iterates
-   selection
+   reference/index
 
 Indices and tables
 ==================

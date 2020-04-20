@@ -1,8 +1,4 @@
-"""Provide a class which implements the Kaczmarz/ART update.
-
->>> 10
-10
-"""
+"""Provide a class which implements the Kaczmarz/ART update."""
 import numpy as np
 
 from ._get_selection_strategy import get_selection_strategy
