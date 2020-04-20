@@ -3,6 +3,7 @@
 [![PyPI Version](https://img.shields.io/pypi/v/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
 [![Build Status](https://github.com/jdmoorman/kaczmarz-algorithms/workflows/CI/badge.svg)](https://github.com/jdmoorman/kaczmarz-algorithms/actions)
+[![Documentation Status](https://readthedocs.org/projects/kaczmarz-algorithms/badge/?version=stable)](https://kaczmarz-algorithms.readthedocs.io/en/stable/?badge=stable)
 [![Code Coverage](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms/branch/master/graph/badge.svg)](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 [![DOI](https://zenodo.org/badge/255942132.svg)](https://zenodo.org/badge/latestdoi/255942132)
