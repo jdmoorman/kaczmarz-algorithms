@@ -18,15 +18,9 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath("../src"))
-
 import sphinx_rtd_theme  # noqa: F401
 
 import kaczmarz  # noqa: E402
-
 
 # -- General configuration ---------------------------------------------
 
