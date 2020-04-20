@@ -30,7 +30,7 @@ class Cyclic(SelectionStrategy):
 
         Returns
         -------
-        int
+        ik : int
             The next row index, in cyclic order.
         """
         self.row_index = (1 + self.row_index) % self.n_rows

@@ -2,5 +2,5 @@
 Kaczmarz Iterates
 =================
 
-.. autoclass:: kaczmarz.iterates
+.. autoclass:: kaczmarz.Iterates
    :members:
