@@ -10,7 +10,7 @@ with open("README.md") as readme_file:
 
 test_requirements = ["pytest", "pytest-cov", "pytest-raises"]
 
-docs_requirements = []
+docs_requirements = ["sphinx==1.8.5", "sphinx-rtd-theme", "m2r"]
 
 setup_requirements = ["pytest-runner"]
 

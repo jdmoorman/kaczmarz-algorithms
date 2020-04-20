@@ -8,7 +8,7 @@ class Cyclic(SelectionStrategy):
 
     Parameters
     ----------
-    A : 2darray
+    A : (m, n) array
         A matrix whose rows should be cycled through.
     args : tuple
         Unneeded arguments, likely provided automatically by kaczmarz.Iterates.
@@ -25,12 +25,12 @@ class Cyclic(SelectionStrategy):
 
         Parameters
         ----------
-        xk : ndarray
+        xk : (n,) array
             The current Kaczmarz iterate. Not used for this selection strategy.
 
         Returns
         -------
-        int
+        ik : int
             The next row index, in cyclic order.
         """
         self.row_index = (1 + self.row_index) % self.n_rows
