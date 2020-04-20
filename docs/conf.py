@@ -21,11 +21,11 @@
 import os
 import sys
 
+sys.path.insert(0, os.path.abspath("../src"))
+
 import sphinx_rtd_theme  # noqa: F401
 
-import kaczmarz
-
-sys.path.insert(0, os.path.abspath("../src"))
+import kaczmarz  # noqa: E402
 
 
 # -- General configuration ---------------------------------------------
