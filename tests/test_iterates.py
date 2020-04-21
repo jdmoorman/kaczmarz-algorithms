@@ -4,24 +4,6 @@ import pytest
 import kaczmarz
 
 
-@pytest.fixture()
-def A():
-    # fmt: off
-    return np.array([[1, 0, 0],
-                     [0, 1, 0]])
-    # fmt: on
-
-
-@pytest.fixture()
-def b():
-    return np.array([1, 1])
-
-
-@pytest.fixture()
-def x_exact():
-    return np.array([1, 1, 0])
-
-
 def terminates_in_n_iterations(iterates, n):
     iterator = iter(iterates)
     for _ in range(n):
