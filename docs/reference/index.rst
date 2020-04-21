@@ -6,6 +6,5 @@ Reference
    :maxdepth: 1
    :caption: Contents:
 
-   iterates
+   base
    selection
-   abc
