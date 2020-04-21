@@ -32,8 +32,6 @@ class Base(ABC):
         maxiter=float("inf"),
         callback=None,
         row_norms_squared=None,
-        selection_strategy="Cyclic",
-        **selection_strategy_kwargs
     ):
         # TODO: Check what happens if we don't receive a seed.
         # TODO: Return the initial iterate during __iter__
