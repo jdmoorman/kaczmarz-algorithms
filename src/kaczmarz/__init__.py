@@ -13,5 +13,6 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 from . import abc, exceptions, selection
 from ._iterates import Iterates
+from ._solve import solve
 
-__all__ = ["selection", "Iterates", "abc", "exceptions"]
+__all__ = ["selection", "solve", "Iterates", "abc", "exceptions"]
