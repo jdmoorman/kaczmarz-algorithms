@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class KaczmarzBase(ABC):
+class Base(ABC):
     """The Kaczmarz algorithm, without a selection strategy.
 
     Parameters

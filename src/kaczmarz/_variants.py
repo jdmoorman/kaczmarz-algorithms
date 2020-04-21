@@ -1,9 +1,9 @@
 """A module providing selection strategies for the Kaczmarz algorithm."""
 
-from .abc import SelectionStrategy
+import kaczmarz
 
 
-class Cyclic(SelectionStrategy):
+class Cyclic(kaczmarz.Base):
     """Cycle through the row indexes of a matrix in order, repeatedly.
 
     Parameters
