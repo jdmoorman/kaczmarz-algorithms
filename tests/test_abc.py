@@ -34,3 +34,9 @@ def test_undefined_abstract_method():
 
     with pytest.raises(TypeError):
         IncompleteStrategy()
+
+    class CompleteStrategy(SelectionStrategy):
+        def select_row_index(self):
+            return 0
+
+    CompleteStrategy(None, None, None, None, None)
