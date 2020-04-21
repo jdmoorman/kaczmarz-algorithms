@@ -57,7 +57,7 @@ class KaczmarzBase(ABC):
 
     @property
     def ik(self):
-        """The row used on the most recent iteration."""
+        """int: The index of the row used on the most recent iteration."""
         return self._ik
 
     @property
@@ -73,7 +73,7 @@ class KaczmarzBase(ABC):
         xk : (n,) array
             The next iterate of the Kaczmarz algorithm.
         """
-        if self._stopping_criterion():
+        if self._stopping_criterion(self._k, self._xk):
             # TODO: If this is the first iteration, give a warning.
             raise StopIteration
 
@@ -87,12 +87,12 @@ class KaczmarzBase(ABC):
         return self.xk
 
     def __iter__(self):
-        """Get an iterator of the Kaczmarz Iterates.
+        """Perform an iteration of the Kaczmarz algorithm.
 
         Returns
         -------
-        Iterates : iterator
-            An iterator of (n,) arrays representing the Kaczmarz Iterates.
+        xk : (n,) array
+            The next iterate of the Kaczmarz algorithm.
         """
         return self
 
@@ -101,21 +101,30 @@ class KaczmarzBase(ABC):
 
         Parameters
         ----------
+        xk : (n,) array
+            The current iterate of the Kaczmarz algorithm.
         ik : int
             Row index to use for the update.
 
         Returns
         -------
-        xk : (n,) array
+        xkp1 : (n,) array
             The next iterate
         """
         ai = self._A[ik]
         bi = self._b[ik]
         ai_norm_squared = self._row_norms_squared[ik]
-        return self._xk + ((bi - ai @ self._xk) / ai_norm_squared) * ai
+        return xk + ((bi - ai @ xk) / ai_norm_squared) * ai
 
-    def _stopping_criterion(self):
-        """Check if iteration cap or desired accuracy have been reached.
+    def _stopping_criterion(self, k, xk):
+        """Check if the iteration should terminate.
+
+        Parameters
+        ----------
+        k : int
+            The number of iterations that have passed.
+        xk : (n,) array
+            The current iterate of the Kaczmarz algorithm.
 
         Returns
         -------
