@@ -12,6 +12,6 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
 from . import abc, exceptions
-from ._selection_strategies import Cyclic
+from ._variants import Cyclic
 
 __all__ = ["abc", "exceptions", "Cyclic"]
