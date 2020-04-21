@@ -136,9 +136,6 @@ class Iterates:
         stop : bool
             True if the iteration should be terminated.
         """
-        if self._xk is None:
-            return False
-
         if self._k >= self._maxiter:
             return True
 
