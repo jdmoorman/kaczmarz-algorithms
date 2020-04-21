@@ -21,6 +21,8 @@ class Base(ABC):
     callback : function, optional
         User-supplied function to call after each iteration.
         It is called as callback(xk), where xk is the current solution vector.
+    row_norms_squared : (m,) array, optional
+        Squared row norms of `A`.
     """
 
     def __init__(
@@ -94,12 +96,7 @@ class Base(ABC):
         return self.xk
 
     def __iter__(self):
-        """Perform an iteration of the Kaczmarz algorithm.
-
-        Returns
-        -------
-        xk : (n,) array
-            The next iterate of the Kaczmarz algorithm.
+        """Iterator for iterates of the Kaczmarz algorithm.
         """
         return self
 
@@ -150,7 +147,7 @@ class Base(ABC):
 
     @classmethod
     def iterates(cls, *args, **kwargs):
-        """Get an iterator of the Kaczmarz Iterates.
+        """Get the Kaczmarz iterates.
 
         TODO: Describe the invisible arguments.
 
