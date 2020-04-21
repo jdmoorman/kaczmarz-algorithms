@@ -79,9 +79,9 @@ class KaczmarzBase(ABC):
         self._xk = self._update_iterate(self._ik)
 
         if self._callback is not None:
-            self._callback(self._xk.copy())
+            self._callback(self.xk)
 
-        return self._xk.copy()
+        return self.xk
 
     def __iter__(self):
         """Get an iterator of the Kaczmarz Iterates.
