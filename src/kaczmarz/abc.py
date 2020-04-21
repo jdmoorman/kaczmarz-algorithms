@@ -51,6 +51,9 @@ class KaczmarzBase(ABC):
         self._tol = tol
         self._maxiter = maxiter
         self._callback = callback
+        self._k = 0
+        self._ik = -1
+        self._xk = self._x0
 
     @property
     def ik(self):
@@ -91,9 +94,6 @@ class KaczmarzBase(ABC):
         Iterates : iterator
             An iterator of (n,) arrays representing the Kaczmarz Iterates.
         """
-        self._k = 0
-        self._ik = -1
-        self._xk = self._x0
         return self
 
     def update_iterate(self, xk, ik):
