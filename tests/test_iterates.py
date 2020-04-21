@@ -41,6 +41,14 @@ def test_initial_guess(A, b):
     assert list(x0) == list(next(iter(iterates)))
 
 
+def test_ik(A, b):
+    """Row selected at each iteration should be accessable through the .ik attribute."""
+    x0 = np.array([0, 0, 0])
+    iterates = kaczmarz.Iterates(A, b, x0, selection_strategy="Cyclic")
+    for i, _ in enumerate(iterates):
+        assert i == iterates.ik
+
+
 def test_maxiter(A, b):
     """Passing `maxiter=1` should cause the algorithm to terminate after one iteration."""
 
