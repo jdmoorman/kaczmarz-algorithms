@@ -2,7 +2,6 @@ import kaczmarz
 
 
 def solve(
-    self,
     A,
     b,
     x0=None,
