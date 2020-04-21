@@ -36,16 +36,16 @@ class Base(ABC):
         # TODO: Check what happens if we don't receive a seed.
         # TODO: Return the initial iterate during __iter__
         # TODO: Turn this class into a function.
-        self._A = A
+        self._A = np.array(A)
         if row_norms_squared is None:
             row_norms_squared = (A ** 2).sum(axis=1)
         self._row_norms_squared = row_norms_squared
-        self._b = b.ravel()
+        self._b = np.array(b)
 
         if x0 is None:
             n_cols = A.shape[1]
             x0 = np.zeros(n_cols)
-        self._x0 = x0.ravel()
+        self._x0 = np.array(x0)
         self._tol = tol
         self._maxiter = maxiter
         if callback is None:
