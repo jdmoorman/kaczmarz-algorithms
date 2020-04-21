@@ -75,8 +75,8 @@ class KaczmarzBase(ABC):
             raise StopIteration
 
         self._k += 1
-        self._ik = self._selection_strategy.select_row_index(self._xk)
-        self._xk = self._update_iterate(self._ik)
+        self._ik = self.select_row_index(self._xk)
+        self._xk = self.update_iterate(self._xk, self._ik)
 
         if self._callback is not None:
             self._callback(self.xk)
@@ -96,7 +96,7 @@ class KaczmarzBase(ABC):
         self._xk = self._x0
         return self
 
-    def _update_iterate(self, ik):
+    def update_iterate(self, xk, ik):
         """Apply the Kaczmarz update.
 
         Parameters
