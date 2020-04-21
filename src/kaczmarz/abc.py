@@ -36,7 +36,6 @@ class SelectionStrategy(ABC):
         ik : int
             The index of the next row to use.
         """
-        return 0
 
     @classmethod
     def __subclasshook__(cls, C):
