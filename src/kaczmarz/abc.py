@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class SelectionStrategy(ABC):
+class KaczmarzBase(ABC):
     """The Kaczmarz algorithm, without a selection strategy.
 
     Parameters
@@ -139,10 +139,3 @@ class SelectionStrategy(ABC):
         ik : int
             The index of the next row to use.
         """
-
-    @classmethod
-    def __subclasshook__(cls, C):
-        if cls is SelectionStrategy:
-            if any("select_row_index" in B.__dict__ for B in C.__mro__):
-                return True
-        return NotImplemented
