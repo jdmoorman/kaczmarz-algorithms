@@ -8,21 +8,25 @@ https://pytest.org/latest/plugins.html
 https://stackoverflow.com/questions/34466027/in-pytest-what-is-the-use-of-conftest-py-files
 """
 
+import numpy as np
 import pytest
 
 
 @pytest.fixture()
-def LegitStrategy():
-    class _LegitStrategy:
-        def select_row_index(self, xk):
-            return 1
-
-    return _LegitStrategy
+def eye33():
+    return np.eye(3)
 
 
 @pytest.fixture()
-def NonStrategy():
-    class _NonStrategy:
-        pass
+def eye23():
+    return np.eye(2, 3)
 
-    return _NonStrategy
+
+@pytest.fixture()
+def ones3():
+    return np.ones(3)
+
+
+@pytest.fixture()
+def ones2():
+    return np.ones(2)

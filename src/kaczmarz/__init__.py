@@ -11,8 +11,8 @@ __license__ = "MIT"
 __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
-from . import abc, exceptions, selection
-from ._iterates import Iterates
-from ._solve import solve
+from . import exceptions
+from ._abc import Base
+from ._variants import Cyclic
 
-__all__ = ["selection", "solve", "Iterates", "abc", "exceptions"]
+__all__ = ["exceptions", "Base", "Cyclic"]

@@ -2,5 +2,5 @@
 Selection Strategies
 ====================
 
-.. automodule:: kaczmarz.selection
+.. autoclass:: kaczmarz.Cyclic
    :members:
