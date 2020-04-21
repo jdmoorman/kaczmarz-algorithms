@@ -125,6 +125,35 @@ class KaczmarzBase(ABC):
         if squared_residual_norm < self._tol ** 2:
             return True
 
+    @classmethod
+    def iterates(cls, *args, **kwargs):
+        """Get an iterator of the Kaczmarz Iterates.
+
+        TODO: Describe the invisible arguments.
+
+        Returns
+        -------
+        iterates : iterable((n,) array)
+            An iterable of the Kaczmarz iterates.
+        """
+        return cls(*args, **kwargs)
+
+    @classmethod
+    def solve(cls, *args, **kwargs):
+        """Solve a linear system of equations using the Kaczmarz algorithm.
+
+        TODO: Describe the invisible arguments.
+
+        Returns
+        -------
+        x : (n,) array
+            The solution to the system `Ax = b`
+        """
+        iterates = cls.iterates(*args, **kwargs)
+        for x in iterates:
+            pass
+        return x
+
     @abstractmethod
     def select_row_index(self, xk):
         """Select a row to use for the next Kaczmarz update.
