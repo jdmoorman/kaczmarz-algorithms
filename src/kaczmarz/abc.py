@@ -57,6 +57,11 @@ class KaczmarzBase(ABC):
         """The row used on the most recent iteration."""
         return self._ik
 
+    @property
+    def xk(self):
+        """(n,) array: The most recent iterate."""
+        return self._xk.copy()
+
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm.
 
