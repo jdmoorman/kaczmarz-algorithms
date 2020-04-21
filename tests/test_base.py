@@ -48,6 +48,19 @@ def test_initial_guess(eye23, ones2, DummyStrategy):
     assert list(x0) == list(next(iter(iterates)))
 
 
+def test_ik(eye23, ones2, DummyStrategy):
+    """Row selected at each iteration should be accessable through the .ik attribute."""
+    x0 = np.array([0, 0, 0])
+    iterates = DummyStrategy(eye23, ones2, x0)
+    iterator = iter(iterates)
+    next(iterator)
+    assert -1 == iterates.ik
+    next(iterator)
+    assert 0 == iterates.ik
+    next(iterator)
+    assert 0 == iterates.ik
+
+
 def test_maxiter(eye23, ones2, DummyStrategy):
     """Passing `maxiter=1` should cause the algorithm to terminate after one iteration."""
 

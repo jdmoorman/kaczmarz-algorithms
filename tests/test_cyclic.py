@@ -22,14 +22,6 @@ def test_row_indexes(eye23, ones2):
         next(iterator)
 
 
-def test_ik(eye23, ones2):
-    """Row selected at each iteration should be accessable through the .ik attribute."""
-    x0 = np.array([0, 0, 0])
-    iterates = kaczmarz.Cyclic(eye23, ones2, x0)
-    for i, _ in enumerate(iterates, -1):
-        assert i == iterates.ik
-
-
 def test_solve_identity(eye33, ones3):
     x = kaczmarz.Cyclic.solve(eye33, ones3)
     assert [1, 1, 1] == list(x)
