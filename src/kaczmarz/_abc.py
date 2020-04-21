@@ -48,10 +48,15 @@ class Base(ABC):
         self._x0 = x0.ravel()
         self._tol = tol
         self._maxiter = maxiter
+        if callback is None:
+
+            def callback(xk):
+                return None
+
         self._callback = callback
-        self._k = 0
+        self._k = -1
         self._ik = -1
-        self._xk = self._x0
+        self._xk = None
 
     @property
     def ik(self):
@@ -71,6 +76,12 @@ class Base(ABC):
         xk : (n,) array
             The next iterate of the Kaczmarz algorithm.
         """
+        if self._k == -1:
+            self._k += 1
+            self._xk = self._x0
+            self._callback(self.xk)
+            return self.xk
+
         if self._stopping_criterion(self._k, self._xk):
             # TODO: If this is the first iteration, give a warning.
             raise StopIteration
@@ -78,9 +89,7 @@ class Base(ABC):
         self._k += 1
         self._ik = self.select_row_index(self._xk)
         self._xk = self.update_iterate(self._xk, self._ik)
-
-        if self._callback is not None:
-            self._callback(self.xk)
+        self._callback(self.xk)
 
         return self.xk
 
@@ -136,6 +145,8 @@ class Base(ABC):
         squared_residual_norm = (residual ** 2).sum()
         if squared_residual_norm < self._tol ** 2:
             return True
+
+        return False
 
     @classmethod
     def iterates(cls, *args, **kwargs):

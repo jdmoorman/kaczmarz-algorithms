@@ -4,22 +4,41 @@ import pytest
 import kaczmarz
 
 
-def test_cyclic():
-    A = np.empty((2, 3))
-    x = np.empty(3)
-    cyclic = kaczmarz.selection.Cyclic(A)
+def test_row_indexes(eye23, ones2):
+    x = np.zeros(3)
+    cyclic = kaczmarz.Cyclic(eye23, ones2)
     assert 0 == cyclic.select_row_index(x)
     assert 1 == cyclic.select_row_index(x)
     assert 0 == cyclic.select_row_index(x)
     assert 1 == cyclic.select_row_index(x)
 
-    A = np.eye(3)
-    b = np.ones(3)
     x0 = np.zeros(3)
-    iterates = kaczmarz.Iterates(A, b, x0, selection_strategy="Cyclic")
+    iterates = kaczmarz.Cyclic.iterates(eye23, ones2, x0)
     iterator = iter(iterates)
+    assert [0, 0, 0] == list(next(iterator))
     assert [1, 0, 0] == list(next(iterator))
     assert [1, 1, 0] == list(next(iterator))
-    assert [1, 1, 1] == list(next(iterator))
     with pytest.raises(StopIteration):
         next(iterator)
+
+
+def test_ik(eye23, ones2):
+    """Row selected at each iteration should be accessable through the .ik attribute."""
+    x0 = np.array([0, 0, 0])
+    iterates = kaczmarz.Cyclic(eye23, ones2, x0)
+    for i, _ in enumerate(iterates, -1):
+        assert i == iterates.ik
+
+
+def test_solve_identity(eye33, ones3):
+    x = kaczmarz.Cyclic.solve(eye33, ones3)
+    assert [1, 1, 1] == list(x)
+
+
+def test_solve_non_orthogonal_matrix():
+    A = np.array([[1, 0, 0], [2, 1, 0], [1, 2, 1], [0, 1, 2], [0, 0, 1]])
+    x_exact = np.ones(3)
+    b = A @ x_exact
+    tol = 1e-5
+    x = kaczmarz.Cyclic.solve(A, b, tol=tol)
+    assert np.linalg.norm(x - x_exact) < tol

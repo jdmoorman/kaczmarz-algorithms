@@ -11,40 +11,22 @@ https://stackoverflow.com/questions/34466027/in-pytest-what-is-the-use-of-confte
 import numpy as np
 import pytest
 
-import kaczmarz
+
+@pytest.fixture()
+def eye33():
+    return np.eye(3)
 
 
 @pytest.fixture()
-def DummyStrategy():
-    class _DummyStrategy(kaczmarz.Base):
-        def select_row_index(self, xk):
-            return 1
-
-    return _DummyStrategy
+def eye23():
+    return np.eye(2, 3)
 
 
 @pytest.fixture()
-def NonStrategy():
-    class _NonStrategy(kaczmarz.Base):
-        pass
-
-    return _NonStrategy
+def ones3():
+    return np.ones(3)
 
 
 @pytest.fixture()
-def A():
-    rows = [
-        [1, 0, 0],
-        [0, 1, 0],
-    ]
-    return np.array(rows)
-
-
-@pytest.fixture()
-def b():
-    return np.array([1, 1])
-
-
-@pytest.fixture()
-def x_exact():
-    return np.array([1, 1, 0])
+def ones2():
+    return np.ones(2)
