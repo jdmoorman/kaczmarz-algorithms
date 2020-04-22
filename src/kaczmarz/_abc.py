@@ -47,7 +47,7 @@ class Base(ABC):
         if x0 is None:
             n_cols = A.shape[1]
             x0 = np.zeros(n_cols)
-        self._x0 = np.array(x0)
+        self._x0 = np.array(x0, dtype="float64")
         self._tol = tol
         self._maxiter = maxiter
         if callback is None:
