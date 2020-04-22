@@ -74,6 +74,17 @@ def test_maxiter(eye23, ones2, DummyStrategy):
     terminates_after_n_iterations(iterates, 1)
 
 
+def test_solve(eye23, ones2, DummyStrategy):
+    # This is not the exact solution.
+    x0 = np.array([0, 0, 0])
+
+    x = DummyStrategy.solve(eye23, ones2, x0, maxiter=0)
+    assert [0, 0, 0] == list(x)
+
+    x = DummyStrategy.solve(eye23, ones2, x0, maxiter=1)
+    assert [1, 0, 0] == list(x)
+
+
 def test_tolerance(eye23, ones2, DummyStrategy):
     x_exact = np.array([1, 1, 0])
 
