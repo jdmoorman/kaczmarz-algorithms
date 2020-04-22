@@ -72,13 +72,13 @@ To access the iterates of the Kaczmarz algorithm with the cyclic selection rule,
 ...               [0, 1, 0],
 ...               [0, 0, 1]])
 >>> b = np.array([1, 1, 1])
->>> x0 = np.array([0, 0, 0])
+>>> x0 = np.array([0, 0, 0])  # Initial iterate
 >>> for xk in kaczmarz.Cyclic.iterates(A, b, x0):
-...     print(xk)
-[0. 0. 0.]
-[1. 0. 0.]
-[1. 1. 0.]
-[1. 1. 1.]
+...     xk
+array([0., 0., 0.])
+array([1., 0., 0.])
+array([1., 1., 0.])
+array([1., 1., 1.])
 
 ```
 
@@ -101,7 +101,8 @@ The initial value of `iterates.ik` is `-1`, since no projections have been perfo
 
 #### Creating your own selection strategy
 
-To implement a selection strategy of your own, inherit from `kaczmarz.Base` and implement the `select_row_index` function. For example, to implement a strategy which uses of the equations of your system in reverse cyclic order:
+To implement a selection strategy of your own, inherit from `kaczmarz.Base` and implement the `select_row_index` function.
+For example, to implement a strategy which uses of the equations of your system in reverse cyclic order:
 
 ```python
 >>> class ReverseCyclic(kaczmarz.Base):
@@ -131,11 +132,12 @@ After projecting onto equation 0: [1. 1. 1.]
 
 ```
 
-For information about the optional arguments of `solve` and `iterates`, as well as the other selection strategies available other than `Cyclic`, [read the docs](https://kaczmarz-algorithms.readthedocs.io/en/stable/).
+For information about the optional arguments of `solve` and `iterates`, as well as the other selection strategies available other than `Cyclic`, see [readthedocs.io](https://kaczmarz-algorithms.readthedocs.io/en/stable/).
 
 
 ## Citing
-If you use our code in an academic setting, please consider citing our code. You can find the appropriate DOI for whichever version you are using on [zenodo.org](https://zenodo.org/badge/latestdoi/255942132).
+If you use our code in an academic setting, please consider citing our code.
+You can find the appropriate DOI for whichever version you are using on [zenodo.org](https://zenodo.org/badge/latestdoi/255942132).
 
 
 ## Development
