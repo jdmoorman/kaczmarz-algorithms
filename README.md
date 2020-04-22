@@ -4,7 +4,8 @@
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
 [![Build Status](https://github.com/jdmoorman/kaczmarz-algorithms/workflows/CI/badge.svg)](https://github.com/jdmoorman/kaczmarz-algorithms/actions)
 [![Documentation Status](https://readthedocs.org/projects/kaczmarz-algorithms/badge/?version=stable)](https://kaczmarz-algorithms.readthedocs.io/en/stable/?badge=stable)
-[![Code Coverage](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms/branch/master/graph/badge.svg)](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Code Coverage](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms/branch/master/graph/badge.svg)](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 [![DOI](https://zenodo.org/badge/255942132.svg)](https://zenodo.org/badge/latestdoi/255942132)
 
@@ -40,6 +41,8 @@ First, import the `kaczmarz` and `numpy` packages.
 
 -->
 
+#### Solving a system of equations
+
 To solve the system of equations `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8` using the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.solve` function.
 
 ```python
@@ -60,6 +63,8 @@ True
 
 ```
 
+#### Inspecting the Kaczmarz iterates
+
 To access the iterates of the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.iterates` function.
 
 ```python
@@ -77,6 +82,8 @@ To access the iterates of the Kaczmarz algorithm with the cyclic selection rule,
 
 ```
 
+#### Inspecting the rows/equations used
+
 To access the row index used at each iteration of the Kaczmarz algorithm with the cyclic selection rule, use the `ik` attribute of the `kaczmarz.Cyclic.iterates` iterable.
 
 ```python
@@ -91,6 +98,8 @@ After projecting onto equation 2: [1. 1. 1.]
 ```
 
 The initial value of `iterates.ik` is `-1`, since no projections have been performed yet at the start of the algorithm.
+
+#### Creating your own selection strategy
 
 To implement a selection strategy of your own, inherit from `kaczmarz.Base` and implement the `select_row_index` function. For example, to implement a strategy which uses of the equations of your system in reverse cyclic order:
 
