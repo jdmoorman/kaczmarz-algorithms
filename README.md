@@ -132,7 +132,7 @@ After projecting onto equation 0: [1. 1. 1.]
 
 ```
 
-For information about the optional arguments of `solve` and `iterates`, as well as the other selection strategies available other than `Cyclic`, see [readthedocs.io](https://kaczmarz-algorithms.readthedocs.io/en/stable/).
+For information about the optional arguments of `solve` and `iterates`, as well as the other selection strategies available other than `Cyclic`, see [readthedocs.io](https://kaczmarz-algorithms.readthedocs.io/).
 
 
 ## Citing
