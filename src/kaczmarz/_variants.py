@@ -21,7 +21,7 @@ class Cyclic(kaczmarz.Base):
         self.n_rows = A.shape[0]
         self.row_index = -1
 
-    def select_row_index(self, xk):
+    def _select_row_index(self, xk):
         """Get the next row index, in cyclic order.
 
         Parameters
