@@ -153,3 +153,11 @@ def test_callback(eye23, ones2, DummyStrategy):
     assert actual_iterates == [[0, 0, 0]]
     next(iterator)
     assert actual_iterates == [[0, 0, 0], [1, 0, 0]]
+
+
+def test_sparse(speye23, ones2, DummyStrategy):
+    x0 = np.array([0, 0, 0])
+    iterator = iter(DummyStrategy.iterates(speye23, ones2, x0))
+
+    assert [0, 0, 0] == list(next(iterator))
+    assert [1, 0, 0] == list(next(iterator))
