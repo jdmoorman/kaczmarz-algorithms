@@ -29,6 +29,11 @@ def speye23():
 
 
 @pytest.fixture()
+def zeros3():
+    return np.zeros(3)
+
+
+@pytest.fixture()
 def ones3():
     return np.ones(3)
 

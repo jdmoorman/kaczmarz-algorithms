@@ -45,7 +45,7 @@ class Base(ABC):
         self._tol = tol
 
         if maxiter is None:
-            maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(A.shape)))
+            maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(self._A.shape)))
 
         self._maxiter = maxiter
         if callback is None:
