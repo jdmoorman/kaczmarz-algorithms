@@ -7,7 +7,7 @@ import kaczmarz
 @pytest.fixture()
 def DummyStrategy():
     class _DummyStrategy(kaczmarz.Base):
-        def select_row_index(self, xk):
+        def _select_row_index(self, xk):
             return 0
 
     return _DummyStrategy
@@ -35,6 +35,14 @@ def test_undefined_abstract_method(eye23, ones2, DummyStrategy, NonStrategy):
         NonStrategy()
 
     DummyStrategy(eye23, ones2)
+
+
+@pytest.mark.timeout(1)
+def test_inconsistent_system_terminates(eye23, ones2, DummyStrategy, NonStrategy):
+    """Make sure inconsistent systems do not run forever."""
+    A = np.array([[1], [2]])
+    b = np.array([1, 1])
+    DummyStrategy.solve(A, b)
 
 
 def test_single_row_matrix(DummyStrategy, allclose):
