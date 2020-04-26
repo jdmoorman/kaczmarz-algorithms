@@ -66,6 +66,37 @@ class Base(ABC):
         """
         return self._xk.copy().reshape(*self._iterate_shape)
 
+    @classmethod
+    def iterates(cls, *args, **kwargs):
+        """Get the Kaczmarz iterates.
+
+        TODO: Describe the invisible arguments.
+
+        Returns
+        -------
+        iterates : iterable((n,) or (n, 1) array)
+            An iterable of the Kaczmarz iterates.
+            The shapes will be inferred from the shape of `x0` if provided, or `b` otherwise.
+        """
+        return cls(*args, **kwargs)
+
+    @classmethod
+    def solve(cls, *args, **kwargs):
+        """Solve a linear system of equations using the Kaczmarz algorithm.
+
+        TODO: Describe the invisible arguments.
+
+        Returns
+        -------
+        x : (n,) or (n, 1) array
+            The solution to the system `Ax = b`.
+            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+        """
+        iterates = cls.iterates(*args, **kwargs)
+        for x in iterates:
+            pass
+        return x
+
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm.
 
@@ -86,8 +117,8 @@ class Base(ABC):
             raise StopIteration
 
         self._k += 1
-        self._ik = self.select_row_index(self._xk)
-        self._xk = self.update_iterate(self._xk, self._ik)
+        self._ik = self._select_row_index(self._xk)
+        self._xk = self._update_iterate(self._xk, self._ik)
         self._callback(self.xk)
 
         return self.xk
@@ -96,7 +127,22 @@ class Base(ABC):
         """Iterator for iterates of the Kaczmarz algorithm."""
         return self
 
-    def update_iterate(self, xk, ik):
+    @abstractmethod
+    def _select_row_index(self, xk):
+        """Select a row to use for the next Kaczmarz update.
+
+        Parameters
+        ----------
+        xk : (n,) array
+            The current Kaczmarz iterate.
+
+        Returns
+        -------
+        ik : int
+            The index of the next row to use.
+        """
+
+    def _update_iterate(self, xk, ik):
         """Apply the Kaczmarz update.
 
         Parameters
@@ -140,49 +186,3 @@ class Base(ABC):
             return True
 
         return False
-
-    @classmethod
-    def iterates(cls, *args, **kwargs):
-        """Get the Kaczmarz iterates.
-
-        TODO: Describe the invisible arguments.
-
-        Returns
-        -------
-        iterates : iterable((n,) or (n, 1) array)
-            An iterable of the Kaczmarz iterates.
-            The shapes will be inferred from the shape of `x0` if provided, or `b` otherwise.
-        """
-        return cls(*args, **kwargs)
-
-    @classmethod
-    def solve(cls, *args, **kwargs):
-        """Solve a linear system of equations using the Kaczmarz algorithm.
-
-        TODO: Describe the invisible arguments.
-
-        Returns
-        -------
-        x : (n,) or (n, 1) array
-            The solution to the system `Ax = b`.
-            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
-        """
-        iterates = cls.iterates(*args, **kwargs)
-        for x in iterates:
-            pass
-        return x
-
-    @abstractmethod
-    def select_row_index(self, xk):
-        """Select a row to use for the next Kaczmarz update.
-
-        Parameters
-        ----------
-        xk : (n,) array
-            The current Kaczmarz iterate.
-
-        Returns
-        -------
-        ik : int
-            The index of the next row to use.
-        """
