@@ -10,7 +10,7 @@ class Base(ABC):
     ----------
     A : (m, n) array
         The real or complex m-by-n matrix of the linear system.
-    b : (m,) array
+    b : (m,) or (m, 1) array
         Right hand side of the linear system.
     x0 : (n,) or (n, 1) array, optional
         Starting guess for the solution.
@@ -27,15 +27,19 @@ class Base(ABC):
         self, A, b, x0=None, tol=1e-5, maxiter=float("inf"), callback=None,
     ):
         row_norms = np.sqrt((A ** 2).sum(axis=1)).reshape(-1, 1)
+        b = np.array(b)
 
         self._A = A / row_norms
-        self._b = np.array(b).ravel() / row_norms.ravel()
+        self._b = b.ravel() / row_norms.ravel()
 
         if x0 is None:
             n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
+            self._iterate_shape = list(b.shape)  # [m,] or [m, 1]
+            self._iterate_shape[0] = n_cols
+        else:
+            self._iterate_shape = x0.shape
 
-        self._x0_shape = x0.shape
         self._x0 = np.array(x0, dtype="float64").ravel()
         self._tol = tol
         self._maxiter = maxiter
@@ -56,15 +60,15 @@ class Base(ABC):
 
     @property
     def xk(self):
-        """(n,) array: The most recent iterate."""
-        return self._xk.copy().reshape(*self._x0_shape)
+        """(n,) or (n, 1) array: The most recent iterate."""
+        return self._xk.copy().reshape(*self._iterate_shape)
 
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm.
 
         Returns
         -------
-        xk : (n,) array
+        xk : (n,) or (n, 1) array
             The next iterate of the Kaczmarz algorithm.
         """
         if self._k == -1:
@@ -141,7 +145,7 @@ class Base(ABC):
 
         Returns
         -------
-        iterates : iterable((n,) array)
+        iterates : iterable((n,) or (n, 1) array)
             An iterable of the Kaczmarz iterates.
         """
         return cls(*args, **kwargs)
@@ -154,7 +158,7 @@ class Base(ABC):
 
         Returns
         -------
-        x : (n,) array
+        x : (n,) or (n, 1) array
             The solution to the system `Ax = b`
         """
         iterates = cls.iterates(*args, **kwargs)
