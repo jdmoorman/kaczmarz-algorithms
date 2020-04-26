@@ -98,18 +98,6 @@ def test_tolerance(eye23, ones2, DummyStrategy):
     terminates_after_n_iterations(iterates, 0)
 
 
-def test_row_norms_squared(eye23, ones2, DummyStrategy):
-    """Passing row norms 2x too large causes steps to be half as big."""
-    x0 = np.array([0, 0, 0])
-    fake_row_norms_squared = np.array([2, 2])  # They should be [1, 1]
-    iterates = DummyStrategy.iterates(
-        eye23, ones2, x0, row_norms_squared=fake_row_norms_squared,
-    )
-    iterator = iter(iterates)
-    assert [0, 0, 0] == list(next(iterator))
-    assert [0.5, 0, 0] == list(next(iterator))  # Correct iterate would be [1, 0, 0]
-
-
 def test_callback(eye23, ones2, DummyStrategy):
     """Callback function should be called after each iteration."""
     x0 = np.array([0, 0, 0])
