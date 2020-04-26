@@ -18,13 +18,14 @@ class Base(ABC):
         Tolerance for convergence, `norm(normalized_residual) <= tol`.
     maxiter : int or float, optional
         Maximum number of iterations.
+        Defaults to `log(tol^2)/log(1 - 1/(10*min(m, n)))`.
     callback : function, optional
         User-supplied function to call after each iteration.
         It is called as callback(xk), where xk is the current solution vector.
     """
 
     def __init__(
-        self, A, b, x0=None, tol=1e-5, maxiter=float("inf"), callback=None,
+        self, A, b, x0=None, tol=1e-5, maxiter=None, callback=None,
     ):
         row_norms = np.sqrt((A ** 2).sum(axis=1)).reshape(-1, 1)
         b = np.array(b)
@@ -42,6 +43,10 @@ class Base(ABC):
 
         self._x0 = np.array(x0, dtype="float64").ravel()
         self._tol = tol
+
+        if maxiter is None:
+            maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(A.shape)))
+
         self._maxiter = maxiter
         if callback is None:
 
