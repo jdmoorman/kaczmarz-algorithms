@@ -37,6 +37,18 @@ def test_undefined_abstract_method(eye23, ones2, DummyStrategy, NonStrategy):
     DummyStrategy(eye23, ones2)
 
 
+def test_single_row_matrix(DummyStrategy, allclose):
+    A = np.array([[0, 0, 1, 1]])
+    b = np.array([1])
+    iterates = DummyStrategy.iterates(A, b)
+    iterator = iter(iterates)
+    next(iterator)
+    x_exact = next(iterator)
+    assert allclose([0, 0, 0.5, 0.5], x_exact)
+    with pytest.raises(StopIteration):
+        next(iterator)
+
+
 def test_initial_guess(eye23, ones2, DummyStrategy):
     # Does the default initial iterate have the right shape?
     iterates = DummyStrategy.iterates(eye23, ones2)
