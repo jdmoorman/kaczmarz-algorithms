@@ -21,35 +21,21 @@ class Base(ABC):
     callback : function, optional
         User-supplied function to call after each iteration.
         It is called as callback(xk), where xk is the current solution vector.
-    row_norms_squared : (m,) array, optional
-        Squared row norms of `A`.
     """
 
     def __init__(
-        self,
-        A,
-        b,
-        x0=None,
-        tol=1e-5,
-        maxiter=float("inf"),
-        callback=None,
-        row_norms=None,
+        self, A, b, x0=None, tol=1e-5, maxiter=float("inf"), callback=None,
     ):
+        row_norms = np.sqrt((A ** 2).sum(axis=1)).reshape(-1, 1)
 
-        if row_norms is None:
-            row_norms = np.sqrt((A ** 2).sum(axis=1))
-
-        # Reshape to column vector for broadcasting.
-        row_norms = np.array(row_norms).reshape(-1, 1)
-
-        self._A = np.array(A) / row_norms
+        self._A = A / row_norms
         self._b = np.array(b).ravel() / row_norms.ravel()
 
         if x0 is None:
             n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
 
-        self._x0 = np.array(x0, dtype="float64")
+        self._x0 = np.array(x0, dtype="float64").ravel()
         self._tol = tol
         self._maxiter = maxiter
         if callback is None:
