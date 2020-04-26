@@ -15,7 +15,7 @@ class Base(ABC):
     x0 : (n,) array, optional
         Starting guess for the solution.
     tol : float, optional
-        Tolerance for convergence, `norm(residual) <= tol`.
+        Tolerance for convergence, `norm(normalized_residual) <= tol`.
     maxiter : int or float, optional
         Maximum number of iterations.
     callback : function, optional
@@ -33,20 +33,22 @@ class Base(ABC):
         tol=1e-5,
         maxiter=float("inf"),
         callback=None,
-        row_norms_squared=None,
+        row_norms=None,
     ):
-        # TODO: Check what happens if we don't receive a seed.
-        # TODO: Return the initial iterate during __iter__
-        # TODO: Turn this class into a function.
-        self._A = np.array(A)
-        if row_norms_squared is None:
-            row_norms_squared = (A ** 2).sum(axis=1)
-        self._row_norms_squared = row_norms_squared
-        self._b = np.array(b)
+
+        if row_norms is None:
+            row_norms = A.sum(axis=1)
+
+        # Reshape to column vector for broadcasting.
+        row_norms = np.array(row_norms).reshape(-1, 1)
+
+        self._A = np.array(A) / row_norms
+        self._b = np.array(b).ravel() / row_norms.ravel()
 
         if x0 is None:
             n_cols = A.shape[1]
             x0 = np.zeros(n_cols)
+
         self._x0 = np.array(x0, dtype="float64")
         self._tol = tol
         self._maxiter = maxiter
@@ -96,8 +98,7 @@ class Base(ABC):
         return self.xk
 
     def __iter__(self):
-        """Iterator for iterates of the Kaczmarz algorithm.
-        """
+        """Iterator for iterates of the Kaczmarz algorithm."""
         return self
 
     def update_iterate(self, xk, ik):
@@ -117,8 +118,8 @@ class Base(ABC):
         """
         ai = self._A[ik]
         bi = self._b[ik]
-        ai_norm_squared = self._row_norms_squared[ik]
-        return xk + ((bi - ai @ xk) / ai_norm_squared) * ai
+        print(ai, bi, xk)
+        return xk + (bi - ai @ xk) * ai
 
     def _stopping_criterion(self, k, xk):
         """Check if the iteration should terminate.
@@ -139,8 +140,9 @@ class Base(ABC):
             return True
 
         residual = self._b - self._A @ self._xk
-        squared_residual_norm = (residual ** 2).sum()
-        if squared_residual_norm < self._tol ** 2:
+        residual_norm = np.linalg.norm(residual)
+
+        if residual_norm < self._tol:
             return True
 
         return False
