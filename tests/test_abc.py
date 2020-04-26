@@ -37,6 +37,40 @@ def test_undefined_abstract_method(eye23, ones2, DummyStrategy, NonStrategy):
     DummyStrategy(eye23, ones2)
 
 
+def test_single_row_matrix(DummyStrategy, allclose):
+    A = np.array([[0, 0, 1, 1]])
+    b = np.array([1])
+    iterates = DummyStrategy.iterates(A, b)
+    iterator = iter(iterates)
+    next(iterator)
+    x_exact = next(iterator)
+    assert allclose([0, 0, 0.5, 0.5], x_exact)
+    with pytest.raises(StopIteration):
+        next(iterator)
+
+
+def test_iterate_shape(eye23, ones2, DummyStrategy):
+    """Row selected at each iteration should be accessable through the .ik attribute."""
+    x0 = np.array([0, 0, 0])
+    iterates = DummyStrategy(eye23, ones2, x0)
+    iterator = iter(iterates)
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    x0 = np.array([[0], [0], [0]])
+    iterates = DummyStrategy(eye23, ones2, x0)
+    iterator = iter(iterates)
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    iterates = DummyStrategy(eye23, ones2.reshape(-1))
+    iterator = iter(iterates)
+    assert (3,) == next(iterator).shape
+    assert (3,) == next(iterator).shape
+    iterates = DummyStrategy(eye23, ones2.reshape(-1, 1))
+    iterator = iter(iterates)
+    assert (3, 1) == next(iterator).shape
+    assert (3, 1) == next(iterator).shape
+
+
 def test_initial_guess(eye23, ones2, DummyStrategy):
     # Does the default initial iterate have the right shape?
     iterates = DummyStrategy.iterates(eye23, ones2)
@@ -96,18 +130,6 @@ def test_tolerance(eye23, ones2, DummyStrategy):
     x0 = np.array([1, 0, 0])
     iterates = DummyStrategy.iterates(eye23, ones2, x0, tol=1.01)
     terminates_after_n_iterations(iterates, 0)
-
-
-def test_row_norms_squared(eye23, ones2, DummyStrategy):
-    """Passing row norms 2x too large causes steps to be half as big."""
-    x0 = np.array([0, 0, 0])
-    fake_row_norms_squared = np.array([2, 2])  # They should be [1, 1]
-    iterates = DummyStrategy.iterates(
-        eye23, ones2, x0, row_norms_squared=fake_row_norms_squared,
-    )
-    iterator = iter(iterates)
-    assert [0, 0, 0] == list(next(iterator))
-    assert [0.5, 0, 0] == list(next(iterator))  # Correct iterate would be [1, 0, 0]
 
 
 def test_callback(eye23, ones2, DummyStrategy):

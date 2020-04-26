@@ -10,44 +10,37 @@ class Base(ABC):
     ----------
     A : (m, n) array
         The real or complex m-by-n matrix of the linear system.
-    b : (m,) array
+    b : (m,) or (m, 1) array
         Right hand side of the linear system.
-    x0 : (n,) array, optional
+    x0 : (n,) or (n, 1) array, optional
         Starting guess for the solution.
     tol : float, optional
-        Tolerance for convergence, `norm(residual) <= tol`.
+        Tolerance for convergence, `norm(normalized_residual) <= tol`.
     maxiter : int or float, optional
         Maximum number of iterations.
     callback : function, optional
         User-supplied function to call after each iteration.
         It is called as callback(xk), where xk is the current solution vector.
-    row_norms_squared : (m,) array, optional
-        Squared row norms of `A`.
     """
 
     def __init__(
-        self,
-        A,
-        b,
-        x0=None,
-        tol=1e-5,
-        maxiter=float("inf"),
-        callback=None,
-        row_norms_squared=None,
+        self, A, b, x0=None, tol=1e-5, maxiter=float("inf"), callback=None,
     ):
-        # TODO: Check what happens if we don't receive a seed.
-        # TODO: Return the initial iterate during __iter__
-        # TODO: Turn this class into a function.
-        self._A = np.array(A)
-        if row_norms_squared is None:
-            row_norms_squared = (A ** 2).sum(axis=1)
-        self._row_norms_squared = row_norms_squared
-        self._b = np.array(b)
+        row_norms = np.sqrt((A ** 2).sum(axis=1)).reshape(-1, 1)
+        b = np.array(b)
+
+        self._A = A / row_norms
+        self._b = b.ravel() / row_norms.ravel()
 
         if x0 is None:
-            n_cols = A.shape[1]
+            n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
-        self._x0 = np.array(x0, dtype="float64")
+            self._iterate_shape = list(b.shape)  # [m,] or [m, 1]
+            self._iterate_shape[0] = n_cols
+        else:
+            self._iterate_shape = x0.shape
+
+        self._x0 = np.array(x0, dtype="float64").ravel()
         self._tol = tol
         self._maxiter = maxiter
         if callback is None:
@@ -67,16 +60,20 @@ class Base(ABC):
 
     @property
     def xk(self):
-        """(n,) array: The most recent iterate."""
-        return self._xk.copy()
+        """(n,) or (n, 1) array: The most recent iterate.
+
+        The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+        """
+        return self._xk.copy().reshape(*self._iterate_shape)
 
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm.
 
         Returns
         -------
-        xk : (n,) array
+        xk : (n,) or (n, 1) array
             The next iterate of the Kaczmarz algorithm.
+            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
         """
         if self._k == -1:
             self._k += 1
@@ -96,8 +93,7 @@ class Base(ABC):
         return self.xk
 
     def __iter__(self):
-        """Iterator for iterates of the Kaczmarz algorithm.
-        """
+        """Iterator for iterates of the Kaczmarz algorithm."""
         return self
 
     def update_iterate(self, xk, ik):
@@ -117,8 +113,7 @@ class Base(ABC):
         """
         ai = self._A[ik]
         bi = self._b[ik]
-        ai_norm_squared = self._row_norms_squared[ik]
-        return xk + ((bi - ai @ xk) / ai_norm_squared) * ai
+        return xk + (bi - ai @ xk) * ai
 
     def _stopping_criterion(self, k, xk):
         """Check if the iteration should terminate.
@@ -139,8 +134,9 @@ class Base(ABC):
             return True
 
         residual = self._b - self._A @ self._xk
-        squared_residual_norm = (residual ** 2).sum()
-        if squared_residual_norm < self._tol ** 2:
+        residual_norm = np.linalg.norm(residual)
+
+        if residual_norm < self._tol:
             return True
 
         return False
@@ -153,8 +149,9 @@ class Base(ABC):
 
         Returns
         -------
-        iterates : iterable((n,) array)
+        iterates : iterable((n,) or (n, 1) array)
             An iterable of the Kaczmarz iterates.
+            The shapes will be inferred from the shape of `x0` if provided, or `b` otherwise.
         """
         return cls(*args, **kwargs)
 
@@ -166,8 +163,9 @@ class Base(ABC):
 
         Returns
         -------
-        x : (n,) array
-            The solution to the system `Ax = b`
+        x : (n,) or (n, 1) array
+            The solution to the system `Ax = b`.
+            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
         """
         iterates = cls.iterates(*args, **kwargs)
         for x in iterates:

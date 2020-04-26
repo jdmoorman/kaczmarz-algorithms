@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
-test_requirements = ["pytest", "pytest-cov", "pytest-raises"]
+test_requirements = ["pytest", "pytest-cov", "pytest-raises", "pytest-allclose"]
 
 docs_requirements = ["sphinx==1.8.5", "sphinx-rtd-theme", "m2r"]
 
