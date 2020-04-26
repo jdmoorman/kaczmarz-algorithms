@@ -49,6 +49,28 @@ def test_single_row_matrix(DummyStrategy, allclose):
         next(iterator)
 
 
+def test_iterate_shape(eye23, ones2, DummyStrategy):
+    """Row selected at each iteration should be accessable through the .ik attribute."""
+    x0 = np.array([0, 0, 0])
+    iterates = DummyStrategy(eye23, ones2, x0)
+    iterator = iter(iterates)
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    x0 = np.array([[0, 0, 0]])
+    iterates = DummyStrategy(eye23, ones2, x0)
+    iterator = iter(iterates)
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    x0 = np.array([[0], [0], [0]])
+    iterates = DummyStrategy(eye23, ones2, x0)
+    iterator = iter(iterates)
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+    assert x0.shape == next(iterator).shape
+
+
 def test_initial_guess(eye23, ones2, DummyStrategy):
     # Does the default initial iterate have the right shape?
     iterates = DummyStrategy.iterates(eye23, ones2)

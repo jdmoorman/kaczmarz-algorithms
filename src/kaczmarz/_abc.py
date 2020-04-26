@@ -12,7 +12,7 @@ class Base(ABC):
         The real or complex m-by-n matrix of the linear system.
     b : (m,) array
         Right hand side of the linear system.
-    x0 : (n,) array, optional
+    x0 : (n,) or (n, 1) array, optional
         Starting guess for the solution.
     tol : float, optional
         Tolerance for convergence, `norm(normalized_residual) <= tol`.
@@ -35,6 +35,7 @@ class Base(ABC):
             n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
 
+        self._x0_shape = x0.shape
         self._x0 = np.array(x0, dtype="float64").ravel()
         self._tol = tol
         self._maxiter = maxiter
@@ -56,7 +57,7 @@ class Base(ABC):
     @property
     def xk(self):
         """(n,) array: The most recent iterate."""
-        return self._xk.copy()
+        return self._xk.copy().reshape(*self._x0_shape)
 
     def __next__(self):
         """Perform an iteration of the Kaczmarz algorithm.
