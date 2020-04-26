@@ -7,7 +7,7 @@ import kaczmarz
 @pytest.fixture()
 def DummyStrategy():
     class _DummyStrategy(kaczmarz.Base):
-        def select_row_index(self, xk):
+        def _select_row_index(self, xk):
             return 0
 
     return _DummyStrategy
