@@ -60,7 +60,10 @@ class Base(ABC):
 
     @property
     def xk(self):
-        """(n,) or (n, 1) array: The most recent iterate."""
+        """(n,) or (n, 1) array: The most recent iterate.
+
+        The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+        """
         return self._xk.copy().reshape(*self._iterate_shape)
 
     def __next__(self):
@@ -70,6 +73,7 @@ class Base(ABC):
         -------
         xk : (n,) or (n, 1) array
             The next iterate of the Kaczmarz algorithm.
+            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
         """
         if self._k == -1:
             self._k += 1
@@ -147,6 +151,7 @@ class Base(ABC):
         -------
         iterates : iterable((n,) or (n, 1) array)
             An iterable of the Kaczmarz iterates.
+            The shapes will be inferred from the shape of `x0` if provided, or `b` otherwise.
         """
         return cls(*args, **kwargs)
 
@@ -159,7 +164,8 @@ class Base(ABC):
         Returns
         -------
         x : (n,) or (n, 1) array
-            The solution to the system `Ax = b`
+            The solution to the system `Ax = b`.
+            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
         """
         iterates = cls.iterates(*args, **kwargs)
         for x in iterates:
