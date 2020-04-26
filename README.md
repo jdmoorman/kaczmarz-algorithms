@@ -111,7 +111,7 @@ For example, to implement a strategy which uses of the equations of your system 
 ...         self.n_rows = A.shape[0]
 ...         self.row_index = None
 ...
-...     def select_row_index(self, xk):
+...     def _select_row_index(self, xk):
 ...         if self.row_index is None:
 ...             self.row_index = self.n_rows
 ...         self.row_index = (self.row_index - 1) % self.n_rows
