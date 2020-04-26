@@ -29,8 +29,9 @@ def test_solve_identity(eye33, ones3):
 
 def test_solve_non_orthogonal_matrix():
     A = np.array([[1, 0, 0], [2, 1, 0], [1, 2, 1], [0, 1, 2], [0, 0, 1]])
+    row_norms = np.linalg.norm(A, axis=1)
     x_exact = np.ones(3)
     b = A @ x_exact
     tol = 1e-5
     x = kaczmarz.Cyclic.solve(A, b, tol=tol)
-    assert np.linalg.norm(x - x_exact) < tol
+    assert np.linalg.norm(A @ (x - x_exact) / row_norms) < tol

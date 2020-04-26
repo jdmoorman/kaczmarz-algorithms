@@ -37,7 +37,7 @@ class Base(ABC):
     ):
 
         if row_norms is None:
-            row_norms = A.sum(axis=1)
+            row_norms = np.sqrt((A ** 2).sum(axis=1))
 
         # Reshape to column vector for broadcasting.
         row_norms = np.array(row_norms).reshape(-1, 1)
@@ -46,7 +46,7 @@ class Base(ABC):
         self._b = np.array(b).ravel() / row_norms.ravel()
 
         if x0 is None:
-            n_cols = A.shape[1]
+            n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
 
         self._x0 = np.array(x0, dtype="float64")
@@ -118,7 +118,6 @@ class Base(ABC):
         """
         ai = self._A[ik]
         bi = self._b[ik]
-        print(ai, bi, xk)
         return xk + (bi - ai @ xk) * ai
 
     def _stopping_criterion(self, k, xk):
