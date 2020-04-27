@@ -8,7 +8,7 @@ Welcome to Kaczmarz Algorithms's documentation!
    :caption: Contents:
 
    Overview <self>
-   api/index
+   api
 
 Indices and tables
 ==================
