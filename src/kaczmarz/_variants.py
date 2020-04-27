@@ -36,3 +36,27 @@ class Cyclic(kaczmarz.Base):
     def _select_row_index(self, xk):
         self.row_index = (1 + self.row_index) % self.n_rows
         return self.row_index
+
+
+class MaxDistance(kaczmarz.Base):
+    """Choose the equation which leads to the most progress.
+
+    This selection strategy is also known as `Motzkin's method`.
+
+    Note
+    ----
+    This class inherits the parameters, methods, and properties of
+    :class:`kaczmarz.Base`.
+
+    References
+    ----------
+    1. T. S. Motzkin and I. J. Schoenberg.
+       "The relaxation method for linear inequalities."
+       *Canadian Journal of Mathematics*, 6:393–404, 1954.
+    """
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+
+    def _select_row_index(self, xk):
+        return self.row_index
