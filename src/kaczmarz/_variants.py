@@ -1,5 +1,7 @@
 """A module providing selection strategies for the Kaczmarz algorithm."""
 
+import numpy as np
+
 import kaczmarz
 
 
@@ -59,4 +61,5 @@ class MaxDistance(kaczmarz.Base):
         super().__init__(*base_args, **base_kwargs)
 
     def _select_row_index(self, xk):
-        return self.row_index
+        residual = self._b - self._A @ self._xk
+        return np.argmax(np.abs(residual))
