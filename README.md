@@ -43,7 +43,7 @@ First, import the `kaczmarz` package.
 
 #### Solving a system of equations
 
-To solve the system of equations `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8` using the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.solve` function.
+To solve the system of equations `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8` using the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.solve()` function.
 
 ```python
 >>> A = [[3, 1],
@@ -56,7 +56,7 @@ array([2., 3.])
 
 #### Inspecting the Kaczmarz iterates
 
-To access the iterates of the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.iterates` function.
+To access the iterates of the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.iterates()` function.
 
 ```python
 >>> A = [[1, 0, 0],
@@ -74,23 +74,29 @@ array([1., 1., 1.])
 
 #### Inspecting the rows/equations used
 
-To access the row index used at each iteration of the Kaczmarz algorithm with the cyclic selection rule, use the `ik` attribute of the `kaczmarz.Cyclic.iterates` iterable.
+To access the row index used at each iteration of the Kaczmarz algorithm, use the `ik` attribute of the iterates. For example,
 
 ```python
 >>> iterates = kaczmarz.Cyclic.iterates(A, b, x0)
 >>> for xk in iterates:
-...     print("After projecting onto equation {}: {}".format(iterates.ik, xk))
-After projecting onto equation -1: [0. 0. 0.]
-After projecting onto equation 0: [1. 0. 0.]
-After projecting onto equation 1: [1. 1. 0.]
-After projecting onto equation 2: [1. 1. 1.]
+...     print("Row used:", iterates.ik)
+Row used: -1
+Row used: 0
+Row used: 1
+Row used: 2
 ```
 
 The initial value of `iterates.ik` is `-1`, since no projections have been performed yet at the start of the algorithm.
 
+#### Optional arguments
+
+The `solve()` and `iterates()` functions take optional arguments of `maxiter` and `tol`
+to specify a limit on the number of iterations
+and the desired accuracy of the solution respectively.
+
 #### Creating your own selection strategy
 
-To implement a selection strategy of your own, inherit from `kaczmarz.Base` and implement the `_select_row_index()` function.
+To implement a selection strategy of your own, inherit from `kaczmarz.Base` and implement the `_select_row_index()` method.
 For example, to implement a strategy which uses of the equations of your system in reverse cyclic order:
 
 ```python
@@ -112,11 +118,16 @@ Your new class will inherit `solve()` and `iterates()` class methods which work 
 ```python
 >>> iterates = ReverseCyclic.iterates(A, b, x0)
 >>> for xk in iterates:
-...     print("After projecting onto equation {}: {}".format(iterates.ik, xk))
-After projecting onto equation -1: [0. 0. 0.]
-After projecting onto equation 2: [0. 0. 1.]
-After projecting onto equation 1: [0. 1. 1.]
-After projecting onto equation 0: [1. 1. 1.]
+...     print("Row used:", iterates.ik)
+...     print("Iterate:", xk)
+Row used: -1
+Iterate: [0. 0. 0.]
+Row used: 2
+Iterate: [0. 0. 1.]
+Row used: 1
+Iterate: [0. 1. 1.]
+Row used: 0
+Iterate: [1. 1. 1.]
 ```
 
 For information about the optional arguments of `solve()` and `iterates()`, as well as the other selection strategies available other than `Cyclic`, see [readthedocs.io](https://kaczmarz-algorithms.readthedocs.io/).
