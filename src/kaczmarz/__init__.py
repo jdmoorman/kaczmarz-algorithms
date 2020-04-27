@@ -11,8 +11,7 @@ __license__ = "MIT"
 __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
-from . import exceptions
 from ._abc import Base
 from ._variants import Cyclic
 
-__all__ = ["exceptions", "Base", "Cyclic"]
+__all__ = ["Base", "Cyclic"]

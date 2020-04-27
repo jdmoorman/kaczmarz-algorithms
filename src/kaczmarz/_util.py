@@ -21,7 +21,7 @@ def compute_row_norms(A):
 
 
 def normalize_system(A, b):
-    """Scale the system `A @ x = b` so that the rows of `A` have norm 1.
+    """Scale the system ``A @ x = b`` so that the rows of ``A`` have norm 1.
 
     Parameters
     ----------
@@ -31,9 +31,9 @@ def normalize_system(A, b):
     Returns
     -------
     A_normalized : (m, n) array or spmatrx
-        Copy of `A` with rows scaled to have norm `1`.
+        Copy of ``A`` with rows scaled to have norm ``1``.
     b_normalized : (m,) or (m, 1) array
-        Copy of `b` with entries divided by the row norms of `A`.
+        Copy of ``b`` with entries divided by the row norms of ``A``.
     """
     row_norms = compute_row_norms(A)
     A = normalize(A, norm="l2")

@@ -6,24 +6,34 @@ from ._util import normalize_system
 
 
 class Base(ABC):
-    """The Kaczmarz algorithm, without a selection strategy.
+    """A base class for the Kaczmarz algorithm.
+
+    This class cannot be instantiated directly.
+    Subclasses should implement :meth:`kaczmarz.Base._select_row_index`.
+    Subclasses will typically be constructed using
+    :meth:`kaczmarz.Base.iterates` or :meth:`kaczmarz.Base.solve`.
 
     Parameters
     ----------
     A : (m, n) spmatrix or array_like
-        The real or complex m-by-n matrix of the linear system.
+        The m-by-n matrix of the linear system.
     b : (m,) or (m, 1) array_like
         Right hand side of the linear system.
     x0 : (n,) or (n, 1) array_like, optional
         Starting guess for the solution.
     tol : float, optional
-        Tolerance for convergence, `norm(normalized_residual) <= tol`.
+        Tolerance for convergence, ``norm(normalized_residual) <= tol``.
     maxiter : int or float, optional
         Maximum number of iterations.
-        Defaults to `log(tol^2)/log(1 - 1/(10*min(m, n)))`.
     callback : function, optional
         User-supplied function to call after each iteration.
-        It is called as callback(xk), where xk is the current solution vector.
+        It is called as ``callback(xk)``,
+        where xk is the current solution vector.
+
+    Notes
+    -----
+    There may be additional parameters not listed above
+    depending on the selection strategy subclass.
     """
 
     def __init__(
@@ -66,37 +76,67 @@ class Base(ABC):
     def xk(self):
         """(n,) or (n, 1) array: The most recent iterate.
 
-        The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+        The shape will match that of ``x0`` if provided, or ``b`` otherwise.
         """
         return self._xk.copy().reshape(*self._iterate_shape)
 
     @classmethod
-    def iterates(cls, *args, **kwargs):
+    def iterates(cls, *base_args, **base_kwargs):
         """Get the Kaczmarz iterates.
 
-        TODO: Describe the invisible arguments.
+        Note
+        ----
+        This method takes the same parameters as :class:`kaczmarz.Base`
+        or the subclass from which it is called.
+        For example, :meth:`kaczmarz.Cyclic.iterates`
+        takes the same arguments as :class:`kaczmarz.Cyclic`.
+
+        Parameters
+        ----------
+        base_args : tuple
+            Positional arguments for :class:`kaczmarz.Base` constructor
+            or the subclass in use.
+        base_kwargs : dict
+            Keyword arguments for :class:`kaczmarz.Base` constructor
+            or the subclass in use.
 
         Returns
         -------
         iterates : iterable((n,) or (n, 1) array)
             An iterable of the Kaczmarz iterates.
-            The shapes will be inferred from the shape of `x0` if provided, or `b` otherwise.
+            The shapes will match that of ``x0`` if provided,
+            or ``b`` otherwise.
         """
-        return cls(*args, **kwargs)
+        return cls(*base_args, **base_kwargs)
 
     @classmethod
-    def solve(cls, *args, **kwargs):
+    def solve(cls, *base_args, **base_kwargs):
         """Solve a linear system of equations using the Kaczmarz algorithm.
 
-        TODO: Describe the invisible arguments.
+        Note
+        ----
+        This method takes the same parameters as :class:`kaczmarz.Base`
+        or the subclass from which it is called.
+        For example, :meth:`kaczmarz.Cyclic.solve`
+        takes the same arguments as :class:`kaczmarz.Cyclic`.
+
+        Parameters
+        ----------
+        base_args : tuple
+            Positional arguments for :class:`kaczmarz.Base` constructor
+            or the subclass in use.
+        base_kwargs : dict
+            Keyword arguments for :class:`kaczmarz.Base` constructor
+            or the subclass in use.
 
         Returns
         -------
         x : (n,) or (n, 1) array
-            The solution to the system `Ax = b`.
-            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+            The solution to the system ``A @ x = b``.
+            The shape will match that of ``x0`` if provided,
+            or ``b`` otherwise.
         """
-        iterates = cls.iterates(*args, **kwargs)
+        iterates = cls.iterates(*base_args, **base_kwargs)
         for x in iterates:
             pass
         return x
@@ -108,7 +148,8 @@ class Base(ABC):
         -------
         xk : (n,) or (n, 1) array
             The next iterate of the Kaczmarz algorithm.
-            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+            The shape will match that of ``x0`` if provided,
+            or ``b`` otherwise.
         """
         if self._k == -1:
             self._k += 1
