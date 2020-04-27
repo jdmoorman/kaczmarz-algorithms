@@ -32,7 +32,7 @@ dev_requirements = [
     "wheel>=0.33.1",
 ]
 
-requirements = ["numpy", "scipy"]
+requirements = ["numpy", "scipy", "scikit-learn"]
 
 extra_requirements = {
     "test": test_requirements,

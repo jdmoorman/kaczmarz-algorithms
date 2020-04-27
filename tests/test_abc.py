@@ -48,8 +48,7 @@ def test_inconsistent_system_terminates(eye23, ones2, DummyStrategy, NonStrategy
 def test_single_row_matrix(DummyStrategy, allclose):
     A = np.array([[0, 0, 1, 1]])
     b = np.array([1])
-    iterates = DummyStrategy.iterates(A, b)
-    iterator = iter(iterates)
+    iterator = iter(DummyStrategy.iterates(A, b))
     next(iterator)
     x_exact = next(iterator)
     assert allclose([0, 0, 0.5, 0.5], x_exact)
@@ -60,21 +59,17 @@ def test_single_row_matrix(DummyStrategy, allclose):
 def test_iterate_shape(eye23, ones2, DummyStrategy):
     """Row selected at each iteration should be accessable through the .ik attribute."""
     x0 = np.array([0, 0, 0])
-    iterates = DummyStrategy(eye23, ones2, x0)
-    iterator = iter(iterates)
+    iterator = iter(DummyStrategy(eye23, ones2, x0))
     assert x0.shape == next(iterator).shape
     assert x0.shape == next(iterator).shape
     x0 = np.array([[0], [0], [0]])
-    iterates = DummyStrategy(eye23, ones2, x0)
-    iterator = iter(iterates)
+    iterator = iter(DummyStrategy(eye23, ones2, x0))
     assert x0.shape == next(iterator).shape
     assert x0.shape == next(iterator).shape
-    iterates = DummyStrategy(eye23, ones2.reshape(-1))
-    iterator = iter(iterates)
+    iterator = iter(DummyStrategy(eye23, ones2.reshape(-1)))
     assert (3,) == next(iterator).shape
     assert (3,) == next(iterator).shape
-    iterates = DummyStrategy(eye23, ones2.reshape(-1, 1))
-    iterator = iter(iterates)
+    iterator = iter(DummyStrategy(eye23, ones2.reshape(-1, 1)))
     assert (3, 1) == next(iterator).shape
     assert (3, 1) == next(iterator).shape
 
@@ -90,10 +85,9 @@ def test_initial_guess(eye23, ones2, DummyStrategy):
     assert list(x0) == list(next(iter(iterates)))
 
 
-def test_ik(eye23, ones2, DummyStrategy):
+def test_ik(eye23, ones2, zeros3, DummyStrategy):
     """Row selected at each iteration should be accessable through the .ik attribute."""
-    x0 = np.array([0, 0, 0])
-    iterates = DummyStrategy(eye23, ones2, x0)
+    iterates = DummyStrategy(eye23, ones2, zeros3)
     iterator = iter(iterates)
     next(iterator)
     assert -1 == iterates.ik
@@ -103,27 +97,25 @@ def test_ik(eye23, ones2, DummyStrategy):
     assert 0 == iterates.ik
 
 
-def test_maxiter(eye23, ones2, DummyStrategy):
+def test_maxiter(eye23, ones2, zeros3, DummyStrategy):
     """Passing `maxiter=1` should cause the algorithm to terminate after one iteration."""
 
-    # This is not the exact solution.
-    x0 = np.array([0, 0, 0])
+    # [0, 0, 0] is not the exact solution.
 
-    iterates = DummyStrategy.iterates(eye23, ones2, x0, maxiter=0)
+    iterates = DummyStrategy.iterates(eye23, ones2, zeros3, maxiter=0)
     terminates_after_n_iterations(iterates, 0)
 
-    iterates = DummyStrategy.iterates(eye23, ones2, x0, maxiter=1)
+    iterates = DummyStrategy.iterates(eye23, ones2, zeros3, maxiter=1)
     terminates_after_n_iterations(iterates, 1)
 
 
-def test_solve(eye23, ones2, DummyStrategy):
-    # This is not the exact solution.
-    x0 = np.array([0, 0, 0])
+def test_solve(eye23, ones2, zeros3, DummyStrategy):
+    # [0, 0, 0] is not the exact solution.
 
-    x = DummyStrategy.solve(eye23, ones2, x0, maxiter=0)
+    x = DummyStrategy.solve(eye23, ones2, zeros3, maxiter=0)
     assert [0, 0, 0] == list(x)
 
-    x = DummyStrategy.solve(eye23, ones2, x0, maxiter=1)
+    x = DummyStrategy.solve(eye23, ones2, zeros3, maxiter=1)
     assert [1, 0, 0] == list(x)
 
 
@@ -140,16 +132,45 @@ def test_tolerance(eye23, ones2, DummyStrategy):
     terminates_after_n_iterations(iterates, 0)
 
 
-def test_callback(eye23, ones2, DummyStrategy):
+def test_callback(eye23, ones2, zeros3, DummyStrategy):
     """Callback function should be called after each iteration."""
-    x0 = np.array([0, 0, 0])
     actual_iterates = []
 
     def callback(xk):
         actual_iterates.append(list(xk))
 
-    iterator = iter(DummyStrategy.iterates(eye23, ones2, x0, callback=callback))
+    iterator = iter(DummyStrategy.iterates(eye23, ones2, zeros3, callback=callback))
     next(iterator)
     assert actual_iterates == [[0, 0, 0]]
     next(iterator)
     assert actual_iterates == [[0, 0, 0], [1, 0, 0]]
+
+
+def test_sparse(speye23, ones2, zeros3, DummyStrategy):
+    iterator = iter(DummyStrategy.iterates(speye23, ones2, zeros3))
+
+    assert [0, 0, 0] == list(next(iterator))
+    assert [1, 0, 0] == list(next(iterator))
+
+
+def test_array_like(eye23, ones2, zeros3, DummyStrategy):
+    iterator = iter(
+        DummyStrategy.iterates(eye23.tolist(), ones2.tolist(), zeros3.tolist())
+    )
+
+    assert [0, 0, 0] == list(next(iterator))
+    assert [1, 0, 0] == list(next(iterator))
+
+
+def test_iterates_are_copies(speye23, ones2, zeros3, DummyStrategy):
+    """Check that modifying the iterate inplace does not affect the underlying iteration."""
+    iterator = iter(DummyStrategy.iterates(speye23, ones2, zeros3))
+
+    xk = next(iterator)
+    assert [0, 0, 0] == list(xk)
+    xk[:] = np.inf
+    xk = next(iterator)
+    assert [1, 0, 0] == list(xk)
+    xk[:] = np.inf
+    xk = next(iterator)
+    assert [1, 0, 0] == list(xk)

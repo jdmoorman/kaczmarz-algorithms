@@ -2,17 +2,19 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from ._util import normalize_system
+
 
 class Base(ABC):
     """The Kaczmarz algorithm, without a selection strategy.
 
     Parameters
     ----------
-    A : (m, n) array
+    A : (m, n) spmatrix or array_like
         The real or complex m-by-n matrix of the linear system.
-    b : (m,) or (m, 1) array
+    b : (m,) or (m, 1) array_like
         Right hand side of the linear system.
-    x0 : (n,) or (n, 1) array, optional
+    x0 : (n,) or (n, 1) array_like, optional
         Starting guess for the solution.
     tol : float, optional
         Tolerance for convergence, `norm(normalized_residual) <= tol`.
@@ -27,25 +29,22 @@ class Base(ABC):
     def __init__(
         self, A, b, x0=None, tol=1e-5, maxiter=None, callback=None,
     ):
-        row_norms = np.sqrt((A ** 2).sum(axis=1)).reshape(-1, 1)
-        b = np.array(b)
-
-        self._A = A / row_norms
-        self._b = b.ravel() / row_norms.ravel()
+        self._A, self._b = normalize_system(A, b)
 
         if x0 is None:
             n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
-            self._iterate_shape = list(b.shape)  # [m,] or [m, 1]
+            self._iterate_shape = list(np.shape(b))  # [m,] or [m, 1]
             self._iterate_shape[0] = n_cols
         else:
+            x0 = np.array(x0, dtype="float64")
             self._iterate_shape = x0.shape
 
-        self._x0 = np.array(x0, dtype="float64").ravel()
+        self._x0 = x0.ravel()
         self._tol = tol
 
         if maxiter is None:
-            maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(A.shape)))
+            maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(self._A.shape)))
 
         self._maxiter = maxiter
         if callback is None:
@@ -118,7 +117,6 @@ class Base(ABC):
             return self.xk
 
         if self._stopping_criterion(self._k, self._xk):
-            # TODO: If this is the first iteration, give a warning.
             raise StopIteration
 
         self._k += 1

@@ -10,6 +10,7 @@ https://stackoverflow.com/questions/34466027/in-pytest-what-is-the-use-of-confte
 
 import numpy as np
 import pytest
+import scipy.sparse as sp
 
 
 @pytest.fixture()
@@ -20,6 +21,16 @@ def eye33():
 @pytest.fixture()
 def eye23():
     return np.eye(2, 3)
+
+
+@pytest.fixture()
+def speye23():
+    return sp.csr_matrix(np.eye(2, 3))
+
+
+@pytest.fixture()
+def zeros3():
+    return np.zeros(3)
 
 
 @pytest.fixture()
