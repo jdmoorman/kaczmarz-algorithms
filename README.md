@@ -18,7 +18,7 @@ Variants of the Kaczmarz algorithm for solving linear systems in Python.
 To install Kaczmarz Algorithms, run this command in your terminal:
 
 ```bash
-    $ pip install -U kaczmarz-algorithms
+$ pip install -U kaczmarz-algorithms
 ```
 
 This is the preferred method to install Kaczmarz Algorithms, as it will always install the most recent stable release.
