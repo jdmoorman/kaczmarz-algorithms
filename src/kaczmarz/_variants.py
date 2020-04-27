@@ -8,7 +8,7 @@ class Cyclic(kaczmarz.Base):
 
     Notes
     -----
-    This class has the same parameters, methods, and properties as :class:`kaczmarz.Base`.
+    This class inherits the parameters, methods, and properties of :class:`kaczmarz.Base`.
 
     Parameters
     ----------
