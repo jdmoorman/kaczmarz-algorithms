@@ -33,7 +33,6 @@ First, import the `kaczmarz` and `numpy` packages.
 ```python
 >>> import kaczmarz
 >>> import numpy as np
-
 ```
 
 <!--
@@ -52,7 +51,6 @@ To solve the system of equations `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8` using t
 >>> x = kaczmarz.Cyclic.solve(A, b)
 >>> x
 array([2., 3.])
-
 ```
 
 Check that the solution is correct:
@@ -60,7 +58,6 @@ Check that the solution is correct:
 ```python
 >>> np.allclose(A @ x, b)
 True
-
 ```
 
 #### Inspecting the Kaczmarz iterates
@@ -79,7 +76,6 @@ array([0., 0., 0.])
 array([1., 0., 0.])
 array([1., 1., 0.])
 array([1., 1., 1.])
-
 ```
 
 #### Inspecting the rows/equations used
@@ -94,7 +90,6 @@ After projecting onto equation -1: [0. 0. 0.]
 After projecting onto equation 0: [1. 0. 0.]
 After projecting onto equation 1: [1. 1. 0.]
 After projecting onto equation 2: [1. 1. 1.]
-
 ```
 
 The initial value of `iterates.ik` is `-1`, since no projections have been performed yet at the start of the algorithm.
@@ -116,7 +111,6 @@ For example, to implement a strategy which uses of the equations of your system 
 ...             self.row_index = self.n_rows
 ...         self.row_index = (self.row_index - 1) % self.n_rows
 ...         return self.row_index
-
 ```
 
 Your new class will inherit `solve` and `iterates` class methods which work the same way as `kaczmarz.Cyclic.solve` and `kaczmarz.Cyclic.iterates` described above.
@@ -129,7 +123,6 @@ After projecting onto equation -1: [0. 0. 0.]
 After projecting onto equation 2: [0. 0. 1.]
 After projecting onto equation 1: [0. 1. 1.]
 After projecting onto equation 0: [1. 1. 1.]
-
 ```
 
 For information about the optional arguments of `solve` and `iterates`, as well as the other selection strategies available other than `Cyclic`, see [readthedocs.io](https://kaczmarz-algorithms.readthedocs.io/).
