@@ -30,7 +30,7 @@ def terminates_after_n_iterations(iterates, n):
 
 
 def test_undefined_abstract_method(eye23, ones2, DummyStrategy, NonStrategy):
-    """Forgetting to implement the abstract method `select_row_index` should result in a TypeError on instantiation."""
+    """Forgetting to implement the abstract method ``select_row_index`` should result in a TypeError on instantiation."""
     with pytest.raises(TypeError):
         NonStrategy()
 
@@ -98,7 +98,7 @@ def test_ik(eye23, ones2, zeros3, DummyStrategy):
 
 
 def test_maxiter(eye23, ones2, zeros3, DummyStrategy):
-    """Passing `maxiter=1` should cause the algorithm to terminate after one iteration."""
+    """Passing ``maxiter=1`` should cause the algorithm to terminate after one iteration."""
 
     # [0, 0, 0] is not the exact solution.
 

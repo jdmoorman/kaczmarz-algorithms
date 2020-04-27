@@ -4,21 +4,29 @@ import kaczmarz
 
 
 class Cyclic(kaczmarz.Base):
-    """Cycle through the row indexes of a matrix in order, repeatedly.
+    """Cycle through the equations of the system in order, repeatedly.
+
+    Notes
+    -----
+    This class has the same parameters, methods, and properties as :class:`kaczmarz.Base`.
 
     Parameters
     ----------
-    A : (m, n) array
-        A matrix whose rows should be cycled through.
     args : tuple
-        Unneeded arguments, likely provided automatically by kaczmarz.Iterates.
+        Positional arguments for :class:`kaczmarz.Base` constructor.
     kwargs : dict
-        Unneeded arguments, likely provided automatically by kaczmarz.Iterates.
+        Keyword arguments for :class:`kaczmarz.Base` constructor.
+
+    References
+    ----------
+    1. Kaczmarz, S.: Angenäherte Auflösung von Systemen linearer Gleichungen.
+       *Bulletin International de l’Académie Polonaise des Sciences et des Lettres.
+       Classe des Sciences Mathématiques et Naturelles. Série A, Sciences Mathématiques* 35, 335–357 (1937)
     """
 
-    def __init__(self, A, *args, **kwargs):
-        super().__init__(A, *args, **kwargs)
-        self.n_rows = A.shape[0]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.n_rows = self._A.shape[0]
         self.row_index = -1
 
     def _select_row_index(self, xk):

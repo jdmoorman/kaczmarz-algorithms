@@ -6,24 +6,27 @@ from ._util import normalize_system
 
 
 class Base(ABC):
-    """The Kaczmarz algorithm, without a selection strategy.
+    """A base class for the Kaczmarz algorithm.
+
+    This class cannot be instantiated directly.
+    Subclasses should implement :meth:`kaczmarz.Base._select_row_index`.
+    Subclasses will typically be constructed using :meth:`kaczmarz.Base.iterates` or :meth:`kaczmarz.Base.solve`.
 
     Parameters
     ----------
     A : (m, n) spmatrix or array_like
-        The real or complex m-by-n matrix of the linear system.
+        The m-by-n matrix of the linear system.
     b : (m,) or (m, 1) array_like
         Right hand side of the linear system.
     x0 : (n,) or (n, 1) array_like, optional
         Starting guess for the solution.
     tol : float, optional
-        Tolerance for convergence, `norm(normalized_residual) <= tol`.
+        Tolerance for convergence, ``norm(normalized_residual) <= tol``.
     maxiter : int or float, optional
         Maximum number of iterations.
-        Defaults to `log(tol^2)/log(1 - 1/(10*min(m, n)))`.
     callback : function, optional
         User-supplied function to call after each iteration.
-        It is called as callback(xk), where xk is the current solution vector.
+        It is called as ``callback(xk)``, where xk is the current solution vector.
     """
 
     def __init__(
@@ -66,7 +69,7 @@ class Base(ABC):
     def xk(self):
         """(n,) or (n, 1) array: The most recent iterate.
 
-        The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+        The shape will be inferred from the shape of ``x0`` if provided, or ``b`` otherwise.
         """
         return self._xk.copy().reshape(*self._iterate_shape)
 
@@ -80,7 +83,7 @@ class Base(ABC):
         -------
         iterates : iterable((n,) or (n, 1) array)
             An iterable of the Kaczmarz iterates.
-            The shapes will be inferred from the shape of `x0` if provided, or `b` otherwise.
+            The shapes will be inferred from the shape of ``x0`` if provided, or ``b`` otherwise.
         """
         return cls(*args, **kwargs)
 
@@ -93,8 +96,8 @@ class Base(ABC):
         Returns
         -------
         x : (n,) or (n, 1) array
-            The solution to the system `Ax = b`.
-            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+            The solution to the system ``A @ x = b``.
+            The shape will be inferred from the shape of ``x0`` if provided, or ``b`` otherwise.
         """
         iterates = cls.iterates(*args, **kwargs)
         for x in iterates:
@@ -108,7 +111,7 @@ class Base(ABC):
         -------
         xk : (n,) or (n, 1) array
             The next iterate of the Kaczmarz algorithm.
-            The shape will be inferred from the shape of `x0` if provided, or `b` otherwise.
+            The shape will be inferred from the shape of ``x0`` if provided, or ``b`` otherwise.
         """
         if self._k == -1:
             self._k += 1
