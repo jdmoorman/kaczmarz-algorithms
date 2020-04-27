@@ -1,14 +1,14 @@
 Welcome to Kaczmarz Algorithms's documentation!
 ===============================================================
 
-.. mdinclude:: ../README.md
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    Overview <self>
    api
+
+.. mdinclude:: ../README.md
 
 Indices and tables
 ==================
