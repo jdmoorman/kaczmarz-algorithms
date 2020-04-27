@@ -8,7 +8,7 @@ def compute_row_norms(A):
 
     Parameters
     ----------
-    A : (m, n) spmatrx or array-like
+    A : (m, n) spmatrx or array_like
 
     Returns
     -------
@@ -25,8 +25,8 @@ def normalize_system(A, b):
 
     Parameters
     ----------
-    A : (m, n) spmatrix or array-like
-    b : (m,) or (m, 1) array-like
+    A : (m, n) spmatrix or array_like
+    b : (m,) or (m, 1) array_like
 
     Returns
     -------

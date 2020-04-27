@@ -10,11 +10,11 @@ class Base(ABC):
 
     Parameters
     ----------
-    A : (m, n) spmatrix or array-like
+    A : (m, n) spmatrix or array_like
         The real or complex m-by-n matrix of the linear system.
-    b : (m,) or (m, 1) array-like
+    b : (m,) or (m, 1) array_like
         Right hand side of the linear system.
-    x0 : (n,) or (n, 1) array-like, optional
+    x0 : (n,) or (n, 1) array_like, optional
         Starting guess for the solution.
     tol : float, optional
         Tolerance for convergence, `norm(normalized_residual) <= tol`.
