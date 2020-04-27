@@ -34,17 +34,5 @@ class Cyclic(kaczmarz.Base):
         self.row_index = -1
 
     def _select_row_index(self, xk):
-        """Get the next row index, in cyclic order.
-
-        Parameters
-        ----------
-        xk : (n,) array
-            The current Kaczmarz iterate. Not used for this selection strategy.
-
-        Returns
-        -------
-        ik : int
-            The next row index, in cyclic order.
-        """
         self.row_index = (1 + self.row_index) % self.n_rows
         return self.row_index
