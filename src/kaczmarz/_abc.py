@@ -29,13 +29,12 @@ class Base(ABC):
     def __init__(
         self, A, b, x0=None, tol=1e-5, maxiter=None, callback=None,
     ):
-        b = np.array(b)
         self._A, self._b = normalize_system(A, b)
 
         if x0 is None:
             n_cols = self._A.shape[1]
             x0 = np.zeros(n_cols)
-            self._iterate_shape = list(b.shape)  # [m,] or [m, 1]
+            self._iterate_shape = list(np.shape(b))  # [m,] or [m, 1]
             self._iterate_shape[0] = n_cols
         else:
             x0 = np.array(x0, dtype="float64")

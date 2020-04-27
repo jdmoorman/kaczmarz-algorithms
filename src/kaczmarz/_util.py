@@ -37,6 +37,6 @@ def normalize_system(A, b):
     """
     row_norms = compute_row_norms(A)
     A = normalize(A, norm="l2")
-    b = b.ravel() / row_norms
+    b = np.array(b).ravel() / row_norms
 
     return A, b
