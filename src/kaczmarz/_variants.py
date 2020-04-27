@@ -20,11 +20,12 @@ class Cyclic(kaczmarz.Base):
 
     References
     ----------
-    1. Kaczmarz, S.: Angenäherte Auflösung von Systemen linearer Gleichungen.
+    1. S. Kaczmarz.
+       "Angenäherte Auflösung von Systemen linearer Gleichungen."
        *Bulletin International de l’Académie Polonaise
        des Sciences et des Lettres.
        Classe des Sciences Mathématiques et Naturelles.
-       Série A, Sciences Mathématiques* 35, 335–357 (1937)
+       Série A, Sciences Mathématiques*, 35, 335–357, 1937
     """
 
     def __init__(self, *base_args, **base_kwargs):
