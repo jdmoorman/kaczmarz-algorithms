@@ -2,6 +2,11 @@
 Reference
 =========
 
+.. autosummary::
+
+   kaczmarz.Base
+   kaczmarz.Cyclic
+
 .. autoclass:: kaczmarz.Base
    :members:
    :member-order: bysource
