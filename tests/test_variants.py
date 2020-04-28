@@ -5,6 +5,21 @@ import scipy.sparse as sp
 import kaczmarz
 
 
+def strategies():
+    strategy_classes = []
+    for name in dir(kaczmarz):
+        if name.startswith("_"):
+            continue
+        attr = getattr(kaczmarz, name)
+        if attr == kaczmarz.Base:
+            continue
+        if not issubclass(attr, kaczmarz.Base):
+            continue
+        strategy_classes.append(attr)
+
+    return strategy_classes
+
+
 def orthogonal_rows():
     examples = []
 
@@ -68,22 +83,28 @@ def underdetermined():
     return examples
 
 
-def strategies():
-    strategy_classes = []
-    for name in dir(kaczmarz):
-        if name.startswith("_"):
-            continue
-        attr = getattr(kaczmarz, name)
-        if attr == kaczmarz.Base:
-            continue
-        if not issubclass(attr, kaczmarz.Base):
-            continue
-        strategy_classes.append(attr)
+def overdetermined():
+    examples = []
+    A = [
+        [2],
+        [1],
+        [2],
+    ]
+    x = [1]
+    examples.append((A, x))
+    A = [
+        [2, 1],
+        [1, 2],
+        [2, 3],
+    ]
+    x = [2, 3]
+    examples.append((A, x))
+    return examples
 
-    return strategy_classes
 
-
-@pytest.mark.parametrize("A,x_exact", orthogonal_rows() + underdetermined())
+@pytest.mark.parametrize(
+    "A,x_exact", orthogonal_rows() + underdetermined() + overdetermined()
+)
 @pytest.mark.parametrize("Strategy", strategies())
 def test_solve(A, x_exact, Strategy, allclose):
     """Check that solver works on list-of-lists, np.ndarray, and csr_matrix."""
