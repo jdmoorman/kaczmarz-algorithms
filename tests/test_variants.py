@@ -122,24 +122,3 @@ def test_solve(A, x_exact, Strategy, allclose):
     x_approx = Strategy.solve(Asp, b, tol=tol)
     assert np.linalg.norm(Anp @ (x_approx - x_exact) / row_norms) < tol
     assert allclose(x_approx, x_exact, rtol=10 * tol)
-
-
-#     x = kaczmarz.Cyclic.solve(eye33, ones3)
-#     assert [1, 1, 1] == list(x)
-#
-#
-# def test_solve_non_orthogonal_matrix():
-#     Alol = [
-#     [1, 0, 0],
-#     [2, 1, 0],
-#     [1, 2, 1],
-#     [0, 1, 2],
-#     [0, 0, 1],
-#     ]
-#     A = np.array(Alol)
-#     row_norms = np.linalg.norm(A, axis=1)
-#     x_exact = np.ones(3)
-#     b = A @ x_exact
-#     tol = 1e-5
-#     x = kaczmarz.Cyclic.solve(A, b, tol=tol)
-#     assert np.linalg.norm(A @ (x - x_exact) / row_norms) < tol
