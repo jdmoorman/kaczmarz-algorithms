@@ -4,20 +4,16 @@ import scipy.sparse as sp
 
 import kaczmarz
 
-
-def strategies():
-    strategy_classes = []
-    for name in dir(kaczmarz):
-        if name.startswith("_"):
-            continue
-        attr = getattr(kaczmarz, name)
-        if attr == kaczmarz.Base:
-            continue
-        if not issubclass(attr, kaczmarz.Base):
-            continue
-        strategy_classes.append(attr)
-
-    return strategy_classes
+strategies = []
+for name in dir(kaczmarz):
+    if name.startswith("_"):
+        continue
+    attr = getattr(kaczmarz, name)
+    if attr == kaczmarz.Base:
+        continue
+    if not issubclass(attr, kaczmarz.Base):
+        continue
+    strategies.append(attr)
 
 
 def orthogonal_rows():
@@ -102,10 +98,11 @@ def overdetermined():
     return examples
 
 
-@pytest.mark.parametrize(
-    "A,x_exact", orthogonal_rows() + underdetermined() + overdetermined()
-)
-@pytest.mark.parametrize("Strategy", strategies())
+systems = orthogonal_rows() + underdetermined() + overdetermined()
+
+
+@pytest.mark.parametrize("A,x_exact", systems)
+@pytest.mark.parametrize("Strategy", strategies)
 def test_solve(A, x_exact, Strategy, allclose):
     """Check that solver works on list-of-lists, np.ndarray, and csr_matrix."""
     row_norms = np.linalg.norm(A, axis=1)
@@ -122,3 +119,13 @@ def test_solve(A, x_exact, Strategy, allclose):
     x_approx = Strategy.solve(Asp, b, tol=tol)
     assert np.linalg.norm(Anp @ (x_approx - x_exact) / row_norms) < tol
     assert allclose(x_approx, x_exact, rtol=10 * tol)
+
+
+@pytest.mark.parametrize("A,x_exact", systems)
+@pytest.mark.parametrize("Strategy", strategies)
+def test_iterates_converge_monotonically(A, x_exact, Strategy):
+    """Check that solver works on list-of-lists, np.ndarray, and csr_matrix."""
+    Anp = np.array(A)
+    b = Anp @ x_exact
+    errors = [np.linalg.norm(xk - x_exact) for xk in Strategy.iterates(Anp, b)]
+    assert errors[1:] <= errors[:-1]
