@@ -104,7 +104,7 @@ systems = orthogonal_rows() + underdetermined() + overdetermined()
 @pytest.mark.parametrize("A,x_exact", systems)
 @pytest.mark.parametrize("Strategy", strategies)
 def test_solve(A, x_exact, Strategy, allclose):
-    """Check that solver works on list-of-lists, np.ndarray, and csr_matrix."""
+    """Solvers should accept list-of-lists, np.ndarray, and csr_matrix."""
     row_norms = np.linalg.norm(A, axis=1)
     tol = 1e-5
     Anp = np.array(A)
