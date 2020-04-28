@@ -1,7 +1,8 @@
 # Contributing
 
-Contributions are welcome, and they are greatly appreciated! Every little bit
-helps, and credit will always be given.
+Contributions are welcome, and they are greatly appreciated!
+Every little bit helps, particularly new selection strategies.
+
 
 ## Get Started!
 Ready to contribute? Here's how to set up `kaczmarz-algorithms` for local development.
@@ -31,12 +32,13 @@ Ready to contribute? Here's how to set up `kaczmarz-algorithms` for local develo
     Now you can make your changes locally.
 
 5. When you're done making changes, check that your changes pass linting and
-   tests, including testing other Python versions with make:
+   tests, and that the docs still build:
 
     ```bash
-    tox -e lint
+    $ tox -e lint
+    $ tox -e py38
+    $ tox -e docs
     ```
-
 
 6. Commit your changes and push your branch to GitHub:
 

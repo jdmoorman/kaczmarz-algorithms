@@ -98,7 +98,7 @@ def test_ik(eye23, ones2, zeros3, DummyStrategy):
 
 
 def test_maxiter(eye23, ones2, zeros3, DummyStrategy):
-    """Passing ``maxiter=1`` should cause the algorithm to terminate after one iteration."""
+    """Passing ``maxiter=n`` should cause the algorithm to terminate after n iterations."""
 
     # [0, 0, 0] is not the exact solution.
 
