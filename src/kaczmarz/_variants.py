@@ -63,3 +63,14 @@ class MaxDistance(kaczmarz.Base):
     def _select_row_index(self, xk):
         residual = self._b - self._A @ self._xk
         return np.argmax(np.abs(residual))
+
+
+class UniformRandom(kaczmarz.Base):
+    """ """
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self.n_rows = self._A.shape[0]
+
+    def _select_row_index(self, xk):
+        return np.random.randint(self.n_rows)
