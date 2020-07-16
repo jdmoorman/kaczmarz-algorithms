@@ -8,18 +8,6 @@ import kaczmarz
 class Cyclic(kaczmarz.Base):
     """Cycle through the equations of the system in order, repeatedly.
 
-    Note
-    ----
-    This class inherits the parameters, methods, and properties of
-    :class:`kaczmarz.Base`.
-
-    Parameters
-    ----------
-    base_args : tuple
-        Positional arguments for :class:`kaczmarz.Base` constructor.
-    base_kwargs : dict
-        Keyword arguments for :class:`kaczmarz.Base` constructor.
-
     References
     ----------
     1. S. Kaczmarz.
@@ -32,23 +20,17 @@ class Cyclic(kaczmarz.Base):
 
     def __init__(self, *base_args, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
-        self.n_rows = self._A.shape[0]
         self.row_index = -1
 
     def _select_row_index(self, xk):
-        self.row_index = (1 + self.row_index) % self.n_rows
+        self.row_index = (1 + self.row_index) % self._n_rows
         return self.row_index
 
 
 class MaxDistance(kaczmarz.Base):
-    """Choose the equation which leads to the most progress.
+    """Choose equations which leads to the most progress.
 
     This selection strategy is also known as `Motzkin's method`.
-
-    Note
-    ----
-    This class inherits the parameters, methods, and properties of
-    :class:`kaczmarz.Base`.
 
     References
     ----------
@@ -57,9 +39,46 @@ class MaxDistance(kaczmarz.Base):
        *Canadian Journal of Mathematics*, 6:393–404, 1954.
     """
 
-    def __init__(self, *base_args, **base_kwargs):
-        super().__init__(*base_args, **base_kwargs)
-
     def _select_row_index(self, xk):
+        # TODO: use auxiliary update for the residual.
         residual = self._b - self._A @ self._xk
         return np.argmax(np.abs(residual))
+
+
+class Random(kaczmarz.Base):
+    """Sample equations according to a `fixed` probability distribution.
+
+    Parameters
+    ----------
+    p : (m,) array_like, optional
+        Sampling probability for each equation. Uniform by default.
+    """
+
+    def __init__(self, *base_args, p=None, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self._p = p  # p=None corresponds to uniform.
+
+    def _select_row_index(self, xk):
+        return np.random.choice(self._n_rows, p=self._p)
+
+
+class SVRandom(Random):
+    """Sample equations with probability proportional to the squared row norms.
+
+    References
+    ----------
+    1. T. Strohmer and R. Vershynin,
+       "A Randomized Kaczmarz Algorithm with Exponential Convergence."
+       Journal of Fourier Analysis and Applications 15, 262 2009.
+    """
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        squared_row_norms = self._row_norms ** 2
+        self._p = squared_row_norms / squared_row_norms.sum()
+
+
+class UniformRandom(Random):
+    """Sample equations uniformly at random."""
+
+    # Nothing to do since uniform sampling is the default behavior of Random.
