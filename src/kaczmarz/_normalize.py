@@ -36,7 +36,7 @@ def normalize_matrix(A, row_norms):
     # Be careful! Do not try ``A / row_norms[:, None]`` with a sparse matrix!
     # You will end up with a np.matrix rather than a sparse matrix.
 
-    normalization_matrix = sp.diags(1/row_norms)
+    normalization_matrix = sp.diags(1 / row_norms)
     return normalization_matrix @ A
 
 

@@ -12,6 +12,4 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
 from ._abc import Base
-from ._variants import Cyclic, MaxDistance, Random, UniformRandom, SVRandom
-
-__all__ = ["Base", "Cyclic", "MaxDistance", "Random", "UniformRandom", "SVRandom"]
+from ._variants import Cyclic, MaxDistance, Random, SVRandom, UniformRandom

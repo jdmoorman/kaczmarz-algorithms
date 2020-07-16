@@ -80,3 +80,5 @@ class SVRandom(Random):
 
 class UniformRandom(Random):
     """Sample equations uniformly at random."""
+
+    # Nothing to do since uniform sampling is the default behavior of Random.
