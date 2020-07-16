@@ -39,7 +39,8 @@ class Base(ABC):
     def __init__(
         self, A, b, x0=None, tol=1e-5, maxiter=None, callback=None,
     ):
-        self._A, self._b = normalize_system(A, b)
+        self._A, self._b, self._row_norms = normalize_system(A, b)
+        self._n_rows = len(self._b)
 
         if x0 is None:
             n_cols = self._A.shape[1]

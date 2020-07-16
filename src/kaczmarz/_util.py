@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.sparse as sp
-from sklearn.preprocessing import normalize
+import scipy.sparse.linalg as spla
 
 
 def compute_row_norms(A):
@@ -15,9 +15,32 @@ def compute_row_norms(A):
     row_norms : (m,) array
     """
     if sp.issparse(A):
-        return sp.linalg.norm(A, axis=1)
+        return spla.norm(A, axis=1)
 
     return np.linalg.norm(A, axis=1)
+
+
+def normalize_matrix(A, row_norms=None):
+    """Normalize a matrix to have rows with norm 1.
+
+    Parameters
+    ----------
+    A : (m, n) spmatrx or array
+    row_norms : (m,) array
+
+    Returns
+    -------
+    A_normalized : (m, n) spmatrx or array
+    """
+
+    if row_norms is None:
+        row_norms = compute_row_norms(A)
+
+    # Be careful! Do not try ``A / row_norms[:, None]`` with a sparse matrix!
+    # You will end up with a np.matrix rather than a sparse matrix.
+
+    normalization_matrix = sp.diags(1/row_norms)
+    return normalization_matrix @ A
 
 
 def normalize_system(A, b):
@@ -35,8 +58,11 @@ def normalize_system(A, b):
     b_normalized : (m,) or (m, 1) array
         Copy of ``b`` with entries divided by the row norms of ``A``.
     """
+    if not sp.issparse(A):
+        A = np.array(A)
+
     row_norms = compute_row_norms(A)
-    A = normalize(A, norm="l2")
+    A = normalize_matrix(A, row_norms=row_norms)
     b = np.array(b).ravel() / row_norms
 
-    return A, b
+    return A, b, row_norms
