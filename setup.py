@@ -82,6 +82,6 @@ setup(
     url="https://github.com/jdmoorman/kaczmarz-algorithms",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="0.5.1",
+    version="0.6.0",
     zip_safe=False,
 )
