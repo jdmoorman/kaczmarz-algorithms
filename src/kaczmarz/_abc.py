@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from ._util import normalize_system
+from ._normalize import normalize_system
 
 
 class Base(ABC):
