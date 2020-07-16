@@ -40,6 +40,7 @@ class MaxDistance(kaczmarz.Base):
     """
 
     def _select_row_index(self, xk):
+        # TODO: use auxiliary update for the residual.
         residual = self._b - self._A @ self._xk
         return np.argmax(np.abs(residual))
 
@@ -55,7 +56,7 @@ class Random(kaczmarz.Base):
 
     def __init__(self, *base_args, p=None, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
-        self._p = p
+        self._p = p  # p=None corresponds to uniform.
 
     def _select_row_index(self, xk):
         return np.random.choice(self._n_rows, p=self._p)
@@ -77,10 +78,5 @@ class SVRandom(Random):
         self._p = squared_row_norms / squared_row_norms.sum()
 
 
-
-class UniformRandom(kaczmarz.Base):
+class UniformRandom(Random):
     """Sample equations uniformly at random."""
-    
-    def _select_row_index(self, xk):
-        return np.random.randint(self._n_rows)
-
