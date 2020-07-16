@@ -20,7 +20,7 @@ def compute_row_norms(A):
     return np.linalg.norm(A, axis=1)
 
 
-def normalize_matrix(A, row_norms=None):
+def normalize_matrix(A, row_norms):
     """Normalize a matrix to have rows with norm 1.
 
     Parameters
@@ -32,9 +32,6 @@ def normalize_matrix(A, row_norms=None):
     -------
     A_normalized : (m, n) spmatrx or array
     """
-
-    if row_norms is None:
-        row_norms = compute_row_norms(A)
 
     # Be careful! Do not try ``A / row_norms[:, None]`` with a sparse matrix!
     # You will end up with a np.matrix rather than a sparse matrix.
