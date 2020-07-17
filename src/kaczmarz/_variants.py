@@ -20,11 +20,11 @@ class Cyclic(kaczmarz.Base):
 
     def __init__(self, *base_args, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
-        self.row_index = -1
+        self._row_index = -1
 
     def _select_row_index(self, xk):
-        self.row_index = (1 + self.row_index) % self._n_rows
-        return self.row_index
+        self._row_index = (1 + self._row_index) % self._n_rows
+        return self._row_index
 
 
 class MaxDistance(kaczmarz.Base):
@@ -82,3 +82,42 @@ class UniformRandom(Random):
     """Sample equations uniformly at random."""
 
     # Nothing to do since uniform sampling is the default behavior of Random.
+class ThresholdedBase(Random):
+    def _threshold(self):
+        return
+
+    def _select_row_index(self, xk):
+        ik = super()._select_row_index(xk)
+        distance = np.abs(self._b[ik] - self._A[ik] @ xk)
+
+        threshold = self._threshold(xk)
+        if distance < threshold or np.isclose(distance, threshold):
+            return ik
+        else:
+            return -1 # No projection please
+
+
+class Quantile(ThresholdedBase):
+    def __init__(self, *args, quantile=1.0, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._quantile = quantile
+
+    def _distances(self, xk):
+        return np.abs(self._b - self._A @ xk)
+
+    def _threshold(self, xk):
+        distances = self._distances(xk)
+        return np.quantile(distances, self._quantile)
+
+
+class SampledQuantile(Quantile):
+    def __init__(self, *args, n_samples=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if n_samples is None:
+            n_samples = self._n_rows
+        self._n_samples = n_samples
+
+    def _distances(self, xk):
+        idxs = np.random.choice(self._n_rows, self._n_samples, replace=False)
+        return np.abs(self._b[idxs] - self._A[idxs] @ xk)
+

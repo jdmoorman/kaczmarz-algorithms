@@ -70,7 +70,9 @@ class Base(ABC):
 
     @property
     def ik(self):
-        """int: The index of the row used on the most recent iteration."""
+        """int: The index of the row used on the most recent iteration.
+
+        Takes the value -1 if a projection was not performed at iteration ``k``."""
         return self._ik
 
     @property
@@ -163,7 +165,9 @@ class Base(ABC):
 
         self._k += 1
         self._ik = self._select_row_index(self._xk)
-        self._xk = self._update_iterate(self._xk, self._ik)
+        if self._ik != -1:
+            self._xk = self._update_iterate(self._xk, self._ik)
+
         self._callback(self.xk)
 
         return self.xk
