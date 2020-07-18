@@ -4,6 +4,8 @@ import numpy as np
 
 import kaczmarz
 
+from collections import deque
+
 
 class Cyclic(kaczmarz.Base):
     """Cycle through the equations of the system in order, repeatedly.
@@ -82,16 +84,34 @@ class UniformRandom(Random):
     """Sample equations uniformly at random."""
 
     # Nothing to do since uniform sampling is the default behavior of Random.
+
+
 class ThresholdedBase(Random):
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self._most_recent_index = None  #Most recent index sampled, whether or not it met the threshold
+
     def _threshold(self):
         return
 
-    def _select_row_index(self, xk):
-        ik = super()._select_row_index(xk)
-        distance = np.abs(self._b[ik] - self._A[ik] @ xk)
+    def _distance(self, xk, ik):
+        """
+        Computes distance from vector xk to the index ik hyperplane.
+        """
+        return np.abs(self._b[ik] - self._A[ik] @ xk)
 
+    def _select_row_index(self, xk):
+        """
+        Sample a row by index.  Returns the index if the row satisfies the threshold
+        condition.  Otherwise returns -1.
+        """
+        ik = super()._select_row_index(xk)
+        self._most_recent_index = ik
+
+        d = self._distance(xk, ik)
         threshold = self._threshold(xk)
-        if distance < threshold or np.isclose(distance, threshold):
+        if d < threshold or np.isclose(d, threshold):
             return ik
         else:
             return -1 # No projection please
@@ -107,6 +127,10 @@ class Quantile(ThresholdedBase):
 
     def _threshold(self, xk):
         distances = self._distances(xk)
+
+        if len(distances) == 0:
+            return 0
+
         return np.quantile(distances, self._quantile)
 
 
@@ -121,3 +145,24 @@ class SampledQuantile(Quantile):
         idxs = np.random.choice(self._n_rows, self._n_samples, replace=False)
         return np.abs(self._b[idxs] - self._A[idxs] @ xk)
 
+class WindowedQuantile(Quantile):
+
+    def __init__(self, *args, window_size=100, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._window_size = window_size
+        self._window = deque([])
+
+    def _update_window(self, xk, ik):
+        self._window.append(self._distance(xk, ik))
+        if len(self._window) > self._window_size:
+            self._window.popleft()
+
+    def _select_row_index(self, xk):
+        ik = super()._select_row_index(xk)
+
+        #is this really the right place to update the window?
+        self._update_window(xk, self._most_recent_index)
+        return ik
+
+    def _distances(self, xk): #NOTE: xk is only here so that _distances is overridden
+        return self._window
