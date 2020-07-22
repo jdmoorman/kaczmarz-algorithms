@@ -115,14 +115,14 @@ class ThresholdedBase(Random, ABC):
         condition.  Otherwise returns -1.
         """
         ik = super()._select_row_index(xk)
-        self._most_recent_index = ik
 
-        d = self._distance(xk, ik)
+        distance = self._distance(xk, ik)
         threshold = self._threshold(xk)
-        if d < threshold or np.isclose(d, threshold):
+
+        if distance < threshold or np.isclose(distance, threshold):
             return ik
-        else:
-            return -1  # No projection please
+
+        return -1  # No projection please
 
 
 class Quantile(ThresholdedBase):
