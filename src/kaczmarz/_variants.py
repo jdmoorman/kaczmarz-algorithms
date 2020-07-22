@@ -161,14 +161,9 @@ class WindowedQuantile(Quantile):
             window_size = self._n_rows
         self._window = deque([], maxlen=window_size)
 
-    def _select_row_index(self, xk):
-        ik = super()._select_row_index(xk)
-        self._window.append(self._most_recent_distance)
-        return ik
-
     def _distance(self, xk, ik):
         distance = super()._distance(xk, ik)
-        self._most_recent_distance = distance
+        self._window.append(distance)
         return distance
 
     def _distances(self, xk):
