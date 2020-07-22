@@ -1,6 +1,7 @@
 """A module providing selection strategies for the Kaczmarz algorithm."""
 
 from collections import deque
+from abc import ABC, abstractmethod
 
 import numpy as np
 
@@ -86,15 +87,21 @@ class UniformRandom(Random):
     # Nothing to do since uniform sampling is the default behavior of Random.
 
 
-class ThresholdedBase(Random):
-    def __init__(self, *base_args, **base_kwargs):
-        super().__init__(*base_args, **base_kwargs)
-        self._most_recent_index = (
-            None  # Most recent index sampled, whether or not it met the threshold
-        )
-
+class ThresholdedBase(Random, ABC):
+    @abstractmethod
     def _threshold(self):
-        return
+        """Select a row to use for the next Kaczmarz update.
+
+        Parameters
+        ----------
+        xk : (n,) array
+            The current Kaczmarz iterate.
+
+        Returns
+        -------
+        ik : int
+            The index of the next row to use.
+        """
 
     def _distance(self, xk, ik):
         """
