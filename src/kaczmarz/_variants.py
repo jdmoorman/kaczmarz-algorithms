@@ -1,10 +1,10 @@
 """A module providing selection strategies for the Kaczmarz algorithm."""
 
+from collections import deque
+
 import numpy as np
 
 import kaczmarz
-
-from collections import deque
 
 
 class Cyclic(kaczmarz.Base):
@@ -87,10 +87,11 @@ class UniformRandom(Random):
 
 
 class ThresholdedBase(Random):
-
     def __init__(self, *base_args, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
-        self._most_recent_index = None  #Most recent index sampled, whether or not it met the threshold
+        self._most_recent_index = (
+            None  # Most recent index sampled, whether or not it met the threshold
+        )
 
     def _threshold(self):
         return
@@ -114,7 +115,7 @@ class ThresholdedBase(Random):
         if d < threshold or np.isclose(d, threshold):
             return ik
         else:
-            return -1 # No projection please
+            return -1  # No projection please
 
 
 class Quantile(ThresholdedBase):
@@ -145,8 +146,8 @@ class SampledQuantile(Quantile):
         idxs = np.random.choice(self._n_rows, self._n_samples, replace=False)
         return np.abs(self._b[idxs] - self._A[idxs] @ xk)
 
-class WindowedQuantile(Quantile):
 
+class WindowedQuantile(Quantile):
     def __init__(self, *args, window_size=100, **kwargs):
         super().__init__(*args, **kwargs)
         self._window_size = window_size
@@ -160,9 +161,9 @@ class WindowedQuantile(Quantile):
     def _select_row_index(self, xk):
         ik = super()._select_row_index(xk)
 
-        #is this really the right place to update the window?
+        # is this really the right place to update the window?
         self._update_window(xk, self._most_recent_index)
         return ik
 
-    def _distances(self, xk): #NOTE: xk is only here so that _distances is overridden
+    def _distances(self, xk):  # NOTE: xk is only here so that _distances is overridden
         return self._window
