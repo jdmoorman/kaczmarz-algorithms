@@ -1,7 +1,7 @@
 """A module providing selection strategies for the Kaczmarz algorithm."""
 
-from collections import deque
 from abc import ABC, abstractmethod
+from collections import deque
 
 import numpy as np
 
