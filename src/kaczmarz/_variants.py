@@ -155,22 +155,21 @@ class SampledQuantile(Quantile):
 
 
 class WindowedQuantile(Quantile):
-    def __init__(self, *args, window_size=100, **kwargs):
+    def __init__(self, *args, window_size=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self._window_size = window_size
-        self._window = deque([])
-
-    def _update_window(self, xk, ik):
-        self._window.append(self._distance(xk, ik))
-        if len(self._window) > self._window_size:
-            self._window.popleft()
+        if window_size is None:
+            window_size = self._n_rows
+        self._window = deque([], maxlen=window_size)
 
     def _select_row_index(self, xk):
         ik = super()._select_row_index(xk)
-
-        # is this really the right place to update the window?
-        self._update_window(xk, self._most_recent_index)
+        self._window.append(self._most_recent_distance)
         return ik
 
-    def _distances(self, xk):  # NOTE: xk is only here so that _distances is overridden
+    def _distance(self, xk, ik):
+        distance = super()._distance(xk, ik)
+        self._most_recent_distance = distance
+        return distance
+
+    def _distances(self, xk):
         return self._window
