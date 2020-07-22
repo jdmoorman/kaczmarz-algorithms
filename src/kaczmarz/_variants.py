@@ -87,48 +87,13 @@ class UniformRandom(Random):
     # Nothing to do since uniform sampling is the default behavior of Random.
 
 
-class ThresholdedBase(Random, ABC):
-    @abstractmethod
-    def _threshold(self):
-        """Select a row to use for the next Kaczmarz update.
-
-        Parameters
-        ----------
-        xk : (n,) array
-            The current Kaczmarz iterate.
-
-        Returns
-        -------
-        ik : int
-            The index of the next row to use.
-        """
-
-    def _distance(self, xk, ik):
-        """
-        Computes distance from vector xk to the index ik hyperplane.
-        """
-        return np.abs(self._b[ik] - self._A[ik] @ xk)
-
-    def _select_row_index(self, xk):
-        """
-        Sample a row by index.  Returns the index if the row satisfies the threshold
-        condition.  Otherwise returns -1.
-        """
-        ik = super()._select_row_index(xk)
-
-        distance = self._distance(xk, ik)
-        threshold = self._threshold(xk)
-
-        if distance < threshold or np.isclose(distance, threshold):
-            return ik
-
-        return -1  # No projection please
-
-
-class Quantile(ThresholdedBase):
+class Quantile(Random):
     def __init__(self, *args, quantile=1.0, **kwargs):
         super().__init__(*args, **kwargs)
         self._quantile = quantile
+
+    def _distance(self, xk, ik):
+        return np.abs(self._b[ik] - self._A[ik] @ xk)
 
     def _distances(self, xk):
         return np.abs(self._b - self._A @ xk)
@@ -140,6 +105,17 @@ class Quantile(ThresholdedBase):
             return 0
 
         return np.quantile(distances, self._quantile)
+
+    def _select_row_index(self, xk):
+        ik = super()._select_row_index(xk)
+
+        distance = self._distance(xk, ik)
+        threshold = self._threshold(xk)
+
+        if distance < threshold or np.isclose(distance, threshold):
+            return ik
+
+        return -1  # No projection please
 
 
 class SampledQuantile(Quantile):
