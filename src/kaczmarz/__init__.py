@@ -17,6 +17,7 @@ from ._variants import (
     MaxDistance,
     Quantile,
     Random,
+    RandomOrthoGraph,
     SampledQuantile,
     SVRandom,
     UniformRandom,
