@@ -143,6 +143,7 @@ class SampledQuantile(Quantile):
     ----------
     1. There will be a reference soon. Keep an eye out for that.
     """
+
     def __init__(self, *args, n_samples=None, **kwargs):
         super().__init__(*args, **kwargs)
         if n_samples is None:
@@ -170,6 +171,7 @@ class WindowedQuantile(Quantile):
     ----------
     1. There will be a reference soon. Keep an eye out for that.
     """
+
     def __init__(self, *args, window_size=None, **kwargs):
         super().__init__(*args, **kwargs)
         if window_size is None:
