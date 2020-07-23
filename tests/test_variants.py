@@ -4,6 +4,8 @@ import scipy.sparse as sp
 
 import kaczmarz
 
+np.random.seed(0)
+
 strategies = []
 for name in dir(kaczmarz):
     if name.startswith("_"):
