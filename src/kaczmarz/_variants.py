@@ -94,14 +94,11 @@ class Quantile(Random):
     def _distance(self, xk, ik):
         return np.abs(self._b[ik] - self._A[ik] @ xk)
 
-    def _distances(self, xk):
+    def _threshold_distances(self, xk):
         return np.abs(self._b - self._A @ xk)
 
     def _threshold(self, xk):
-        distances = self._distances(xk)
-
-        if len(distances) == 0:
-            return 0
+        distances = self._threshold_distances(xk)
 
         return np.quantile(distances, self._quantile)
 
@@ -124,7 +121,7 @@ class SampledQuantile(Quantile):
             n_samples = self._n_rows
         self._n_samples = n_samples
 
-    def _distances(self, xk):
+    def _threshold_distances(self, xk):
         idxs = np.random.choice(self._n_rows, self._n_samples, replace=False)
         return np.abs(self._b[idxs] - self._A[idxs] @ xk)
 
@@ -141,5 +138,5 @@ class WindowedQuantile(Quantile):
         self._window.append(distance)
         return distance
 
-    def _distances(self, xk):
+    def _threshold_distances(self, xk):
         return self._window
