@@ -87,6 +87,23 @@ class UniformRandom(Random):
 
 
 class Quantile(Random):
+    """Reject equations whose normalized residual is above a quantile.
+
+    This algorithm is intended for use in solving corrupted systems of equations.
+    That is, systems where a subset of the equations are consistent,
+    while a minority of the equations are not.
+    Such systems are almost always overdetermined.
+
+    Parameters
+    ----------
+    quantile : float, optional
+        Quantile of normalized residual above which to reject.
+
+    References
+    ----------
+    1. There will be a reference soon. Keep an eye out for that.
+    """
+
     def __init__(self, *args, quantile=1.0, **kwargs):
         super().__init__(*args, **kwargs)
         self._quantile = quantile
@@ -115,6 +132,17 @@ class Quantile(Random):
 
 
 class SampledQuantile(Quantile):
+    """Reject equations whose normalized residual is above a quantile of a random subset of residual entries.
+
+    Parameters
+    ----------
+    n_samples: int, optional
+        Number of normalized residual samples used to compute the threshold quantile.
+
+    References
+    ----------
+    1. There will be a reference soon. Keep an eye out for that.
+    """
     def __init__(self, *args, n_samples=None, **kwargs):
         super().__init__(*args, **kwargs)
         if n_samples is None:
@@ -127,6 +155,21 @@ class SampledQuantile(Quantile):
 
 
 class WindowedQuantile(Quantile):
+    """Reject equations whose normalized residual is above a quantile of the most recent normalized residual values.
+
+    Parameters
+    ----------
+    window_size : int, optional
+        Number of recent normalized residual values used to compute the threshold quantile.
+
+    Note
+    ----
+    ``WindowedQuantile`` also accepts the parameters of ``Quantile``.
+
+    References
+    ----------
+    1. There will be a reference soon. Keep an eye out for that.
+    """
     def __init__(self, *args, window_size=None, **kwargs):
         super().__init__(*args, **kwargs)
         if window_size is None:
