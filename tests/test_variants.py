@@ -1,3 +1,5 @@
+from inspect import signature
+
 import numpy as np
 import pytest
 import scipy.sparse as sp
@@ -131,3 +133,21 @@ def test_iterates_converge_monotonically(A, x_exact, Strategy):
     b = Anp @ x_exact
     errors = [np.linalg.norm(xk - x_exact) for xk in Strategy.iterates(Anp, b)]
     assert errors[1:] <= errors[:-1]
+
+
+@pytest.mark.parametrize("A,x_exact", systems)
+@pytest.mark.parametrize("Strategy", strategies)
+def test_with_nonuniform_probabilities(A, x_exact, Strategy, allclose):
+    """Solvers should accept list-of-lists, np.ndarray, and csr_matrix."""
+    if "p" not in signature(Strategy).parameters:
+        return
+
+    A = np.array(A)
+    row_norms = np.linalg.norm(A, axis=1)
+    squared_row_norms = row_norms ** 2
+    p = squared_row_norms / squared_row_norms.sum()
+    tol = 1e-5
+    b = A @ x_exact
+    x_approx = Strategy.solve(A, b, tol=tol, p=p)
+    assert np.linalg.norm(A @ (x_approx - x_exact) / row_norms) < tol
+    assert allclose(x_approx, x_exact, rtol=10 * tol)

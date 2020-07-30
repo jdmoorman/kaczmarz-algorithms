@@ -185,3 +185,54 @@ class WindowedQuantile(Quantile):
 
     def _threshold_distances(self, xk):
         return self._window
+
+
+class RandomOrthoGraph(kaczmarz.Base):
+    """Try to only sample equations which are not already satisfied.
+
+    Use the orthogonality graph defined in [1] to decide which rows should
+    be considered "selectable" at each iteration.
+
+    Parameters
+    ----------
+    p : (m,) array_like, optional
+        Sampling probability for each equation. Uniform by default.
+        These probabilities will be re-normalized based on the selectable rows
+        at each iteration.
+
+    References
+    ----------
+    1. Nutini, Julie, et al.
+       "Convergence rates for greedy Kaczmarz algorithms,
+       and faster randomized Kaczmarz rules using the orthogonality graph."
+       arXiv preprint arXiv:1612.07838 2016.
+    """
+
+    def __init__(self, *args, p=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._ortho_graph = self._A @ self._A.T
+
+        self._i_to_newly_selectable = {
+            i: self._newly_selectable(i) for i in range(self._n_rows)
+        }
+
+        self._selectable = np.argwhere(self._A @ self._x0 - self._b).flatten()
+        if p is None:
+            p = np.ones((self._n_rows,))
+        self._p = p
+
+    def _newly_selectable(self, i):
+        return np.argwhere(self._ortho_graph[i, :])
+
+    def _update_selectable(self, ik):
+        # Every time a row is selected, all of its neighbors become selectable, and itself becomes unselectable.
+        newly_selectable = self._i_to_newly_selectable[ik]
+        selectable_with_ik = np.union1d(self._selectable, newly_selectable)
+        self._selectable = np.setdiff1d(selectable_with_ik, [ik], assume_unique=True)
+
+    def _select_row_index(self, xk):
+        unnormalized_p = self._p[self._selectable]
+        p = unnormalized_p / unnormalized_p.sum()
+        ik = np.random.choice(self._selectable, p=p)
+        self._update_selectable(ik)
+        return ik
