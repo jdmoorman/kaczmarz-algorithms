@@ -273,6 +273,5 @@ class RandomTrueOrthoGraph(kaczmarz.Base):
         selectable = self._selectable(self.ik)
         unnormalized_p = self._p[selectable]
         p = unnormalized_p / unnormalized_p.sum()
-        print(selectable)
         c = np.random.choice(selectable, p=p)
         return c
