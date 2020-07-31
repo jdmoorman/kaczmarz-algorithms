@@ -18,6 +18,7 @@ from ._variants import (
     Quantile,
     Random,
     RandomOrthoGraph,
+    RandomTrueOrthoGraph,
     SampledQuantile,
     SVRandom,
     UniformRandom,
