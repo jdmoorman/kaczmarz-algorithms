@@ -236,3 +236,43 @@ class RandomOrthoGraph(kaczmarz.Base):
         ik = np.random.choice(self._selectable, p=p)
         self._update_selectable(ik)
         return ik
+
+
+class RandomTrueOrthoGraph(kaczmarz.Base):
+    """Try to only sample equations from rows which are orthogonal to a
+    previously selected row or random row if no such row exists.
+
+    Parameters
+    ----------
+    p : (m,) array_like, optional
+        Sampling probability for each equation. Uniform by default.
+        These probabilities will be re-normalized based on the selectable rows
+        at each iteration.
+
+    References
+    ----------
+
+    """
+
+    def __init__(self, *args, p=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._ortho_graph = (self._A @ self._A.T) == 0
+
+        if p is None:
+            p = np.ones((self._n_rows,))
+        self._p = p
+
+    def _selectable(self, i):
+        selectable_rows = np.argwhere(self._ortho_graph[i, :]).flatten()
+        if i == -1 or len(selectable_rows) == 0:
+            return np.arange(self._n_rows)
+
+        return selectable_rows
+
+    def _select_row_index(self, xk):
+        selectable = self._selectable(self.ik)
+        unnormalized_p = self._p[selectable]
+        p = unnormalized_p / unnormalized_p.sum()
+        print(selectable)
+        c = np.random.choice(selectable, p=p)
+        return c
