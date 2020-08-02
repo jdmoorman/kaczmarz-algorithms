@@ -1,5 +1,5 @@
 <p align="center">
-<img width="60%" src="logo.png" alt="logo">
+<img src="logo.png" alt="logo">
 </p>
 
 # Kaczmarz Algorithms
