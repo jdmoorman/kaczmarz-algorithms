@@ -1,3 +1,7 @@
+<p align="center">
+<img width="60%" src="logo.png" alt="logo">
+</p>
+
 # Kaczmarz Algorithms
 
 [![PyPI Version](https://img.shields.io/pypi/v/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
