@@ -1,19 +1,39 @@
-<p align="center">
+<div align="center">
 <img src="logo.png" alt="logo">
-</p>
+</div>
 
-# Kaczmarz Algorithms
+<h2 align="center">Variants of the Kaczmarz algorithm for solving linear systems</h2>
 
-[![PyPI Version](https://img.shields.io/pypi/v/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
-[![Supported Python Versions](https://img.shields.io/pypi/pyversions/kaczmarz-algorithms.svg)](https://pypi.org/project/kaczmarz-algorithms/)
-[![Build Status](https://github.com/jdmoorman/kaczmarz-algorithms/workflows/CI/badge.svg)](https://github.com/jdmoorman/kaczmarz-algorithms/actions)
-[![Documentation Status](https://readthedocs.org/projects/kaczmarz-algorithms/badge/?version=stable)](https://kaczmarz-algorithms.readthedocs.io/en/stable/?badge=stable)
-[![Code Coverage](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms/branch/master/graph/badge.svg)](https://codecov.io/gh/jdmoorman/kaczmarz-algorithms)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+<div align="center">
+<a href="https://pypi.org/project/kaczmarz-algorithms/"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/kaczmarz-algorithms.svg"></a>
+<a href="https://pypi.org/project/kaczmarz-algorithms/"><img alt="Supported Python Versions" src="https://img.shields.io/pypi/pyversions/kaczmarz-algorithms.svg"></a>
+<a href="https://github.com/jdmoorman/kaczmarz-algorithms/actions"><img alt="Build Status" src="https://github.com/jdmoorman/kaczmarz-algorithms/workflows/CI/badge.svg"></a>
+<a href="https://codecov.io/gh/jdmoorman/kaczmarz-algorithms"><img alt="Code Coverage" src="https://codecov.io/gh/jdmoorman/kaczmarz-algorithms/branch/master/graph/badge.svg"></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</div>
 
-[![DOI](https://zenodo.org/badge/255942132.svg)](https://zenodo.org/badge/latestdoi/255942132)
 
-Variants of the Kaczmarz algorithm for solving linear systems in Python.
+<!-- <h3 align="center">
+  <a href="#installation">
+    Installation
+  </a>
+  <span> | </span>
+  <a href="#usage">
+    Usage
+  </a>
+  <span> | </span>
+  <a href="https://kaczmarz-algorithms.readthedocs.io/en/stable/api.html">
+    Documentation
+  </a>
+  <span> | </span>
+  <a href="#citing">
+    Citing
+  </a>
+  <span> | </span>
+  <a href="#development">
+    Development
+  </a>
+</h3> -->
 
 ---
 
