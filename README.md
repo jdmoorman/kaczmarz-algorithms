@@ -13,7 +13,7 @@
 </div>
 
 
-<h3 align="center">
+<!-- <h3 align="center">
   <a href="#installation">
     Installation
   </a>
@@ -33,7 +33,7 @@
   <a href="#development">
     Development
   </a>
-</h3>
+</h3> -->
 
 ---
 
