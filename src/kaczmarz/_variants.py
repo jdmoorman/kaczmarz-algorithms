@@ -239,7 +239,7 @@ class RandomOrthoGraph(kaczmarz.Base):
 
 
 class OrthogonalMaxDistance(kaczmarz.Base):
-    """Select the best orthogonal row to the previous iteration.
+    """Select the best row amongst those orthogonal to the previous iteration.
 
     If there are no rows orthogonal to the one used at the previous iteration,
     select randomly according to a fixed distribution.
@@ -247,9 +247,9 @@ class OrthogonalMaxDistance(kaczmarz.Base):
     Parameters
     ----------
     p : (m,) array_like, optional
-        Sampling probability for each equation. Uniform by default.
-        These probabilities will be re-normalized based on the selectable rows
-        at each iteration.
+        Fallback probability distribution to use for random sampling when
+        no rows are orthogonal to the previously used row. Uniform by default.
+
 
     References
     ----------
