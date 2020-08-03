@@ -22,6 +22,10 @@
     Usage
   </a>
   <span> | </span>
+  <a href="https://kaczmarz-algorithms.readthedocs.io/en/stable/api.html">
+    Documentation
+  </a>
+  <span> | </span>
   <a href="#citing">
     Citing
   </a>
