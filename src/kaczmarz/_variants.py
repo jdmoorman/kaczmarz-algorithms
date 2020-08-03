@@ -267,12 +267,6 @@ class OrthogonalMaxDistance(kaczmarz.Base):
         self._p = p
 
     def _selectable(self, i):
-<<<<<<< HEAD
-=======
-        if i == -1:
-            return []
-
->>>>>>> b84477be09070b2caa124963deaa2ae152730c2c
         selectable_rows = np.argwhere(self._ortho_graph[i, :]).flatten()
         return selectable_rows
 
