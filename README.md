@@ -52,11 +52,13 @@ you through the process.
 
 ## Usage
 
-First, import the `kaczmarz` package.
+Import the package
 
 ```python
 >>> import kaczmarz
 ```
+
+Define your system of equations (e.g. `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8`)
 
 <!--
 ```python
@@ -65,22 +67,31 @@ First, import the `kaczmarz` package.
 ```
 -->
 
-#### Solving a system of equations
-
-To solve the system of equations `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8` using the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.solve()` function.
-
 ```python
 >>> A = [[3, 1],
 ...      [1, 2]]
 >>> b = [9, 8]
+```
+
+Solve the system of equations using the Kaczmarz algorithm with a cyclic selection rule
+
+```python
 >>> x = kaczmarz.Cyclic.solve(A, b)
 >>> x
 array([2., 3.])
 ```
 
-#### Inspecting the Kaczmarz iterates
+Similarly, to solve the same system of equations using the max-distance selection rule
 
-To access the iterates of the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.iterates()` function.
+```python
+>>> x = kaczmarz.MaxDistance.solve(A, b)
+```
+
+For a complete list of selection strategies, check the [docs](https://kaczmarz-algorithms.readthedocs.io/en/stable/api.html). If your desired selection strategy is not provided, please open an issue with your suggestion!
+
+#### Inspect the iterates
+
+To access the iterates of the Kaczmarz algorithm use `kaczmarz.SelectionStrategy.iterates()`. For example,
 
 ```python
 >>> A = [[1, 0, 0],
@@ -96,9 +107,9 @@ array([1., 1., 0.])
 array([1., 1., 1.])
 ```
 
-#### Inspecting the rows/equations used
+#### Inspect the rows/equations used
 
-To access the row index used at each iteration of the Kaczmarz algorithm, use the `ik` attribute of the iterates. For example,
+You can access the row index used at each iteration as `iterates.ik` in the following example.
 
 ```python
 >>> iterates = kaczmarz.Cyclic.iterates(A, b, x0)
@@ -137,7 +148,7 @@ For example, to implement a strategy which uses of the equations of your system 
 ...         return self.row_index
 ```
 
-Your new class will inherit `solve()` and `iterates()` class methods which work the same way as `kaczmarz.Cyclic.solve()` and `kaczmarz.Cyclic.iterates()` described above.
+Your new class will inherit `solve()` and `iterates()` class methods which work the same way as `kaczmarz.SelectionStrategy.solve()` and `kaczmarz.SelectionStrategy.iterates()` described above.
 
 ```python
 >>> iterates = ReverseCyclic.iterates(A, b, x0)
@@ -153,9 +164,6 @@ Iterate: [0. 1. 1.]
 Row used: 0
 Iterate: [1. 1. 1.]
 ```
-
-For information about the optional arguments of `solve()` and `iterates()`, as well as the other selection strategies available other than `Cyclic`, see [readthedocs.io](https://kaczmarz-algorithms.readthedocs.io/).
-
 
 ## Citing
 If you use our code in an academic setting, please consider citing our code.
