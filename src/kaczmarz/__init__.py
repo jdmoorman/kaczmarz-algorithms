@@ -15,10 +15,10 @@ from ._abc import Base
 from ._variants import (
     Cyclic,
     MaxDistance,
+    OrthogonalMaxDistance,
     Quantile,
     Random,
     RandomOrthoGraph,
-    RandomTrueOrthoGraph,
     SampledQuantile,
     SVRandom,
     UniformRandom,
