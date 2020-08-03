@@ -32,11 +32,13 @@ you through the process.
 
 ## Usage
 
-First, import the `kaczmarz` package.
+Import the package
 
 ```python
 >>> import kaczmarz
 ```
+
+Define your system of equations (e.g. `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8`)
 
 <!--
 ```python
@@ -45,18 +47,27 @@ First, import the `kaczmarz` package.
 ```
 -->
 
-#### Solving a system of equations
-
-To solve the system of equations `3 * x0 + x1 = 9` and `x0 + 2 * x1 = 8` using the Kaczmarz algorithm with the cyclic selection rule, use the `kaczmarz.Cyclic.solve()` function.
-
 ```python
 >>> A = [[3, 1],
 ...      [1, 2]]
 >>> b = [9, 8]
+```
+
+Solve the system of equations using the Kaczmarz algorithm with a cyclic selection rule
+
+```python
 >>> x = kaczmarz.Cyclic.solve(A, b)
 >>> x
 array([2., 3.])
 ```
+
+Similarly, to solve the same system of equations using the max-distance selection rule
+
+```python
+>>> x = kaczmarz.MaxDistance.solve(A, b)
+```
+
+For a complete list of selection strategies, check the [docs](https://kaczmarz-algorithms.readthedocs.io/en/stable/api.html). If your desired selection strategy is not provided, please open an issue with your suggestion!
 
 #### Inspecting the Kaczmarz iterates
 
