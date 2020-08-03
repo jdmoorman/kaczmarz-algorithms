@@ -239,8 +239,10 @@ class RandomOrthoGraph(kaczmarz.Base):
 
 
 class OrthogonalMaxDistance(kaczmarz.Base):
-    """Select the best orthogonal row to the previous iteration, if none exists
-    select randomly.
+    """Select the best orthogonal row to the previous iteration.
+
+    If there are no rows orthogonal to the one used at the previous iteration,
+    select randomly according to a fixed distribution.
 
     Parameters
     ----------
@@ -259,14 +261,14 @@ class OrthogonalMaxDistance(kaczmarz.Base):
         self._ortho_graph = (self._A @ self._A.T) == 0
 
         if p is None:
-            p = np.ones((self._n_rows,))/self._n_rows
+            p = np.ones((self._n_rows,)) / self._n_rows
         self._p = p
 
     def _selectable(self, i):
-        selectable_rows = np.argwhere(self._ortho_graph[i, :]).flatten()
         if i == -1:
             return []
 
+        selectable_rows = np.argwhere(self._ortho_graph[i, :]).flatten()
         return selectable_rows
 
     def _select_row_index(self, xk):
