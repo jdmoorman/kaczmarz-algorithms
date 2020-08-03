@@ -258,19 +258,18 @@ class OrthogonalMaxDistance(kaczmarz.Base):
         super().__init__(*args, **kwargs)
         self._ortho_graph = (self._A @ self._A.T) == 0
 
+        self._i_to_selectable = {i: self._selectable(i) for i in range(self._n_rows)}
+
         if p is None:
-            p = np.ones((self._n_rows,))/self._n_rows
+            p = np.ones((self._n_rows,)) / self._n_rows
         self._p = p
 
     def _selectable(self, i):
         selectable_rows = np.argwhere(self._ortho_graph[i, :]).flatten()
-        if i == -1:
-            return []
-
         return selectable_rows
 
     def _select_row_index(self, xk):
-        selectable = self._selectable(self.ik)
+        selectable = self._i_to_selectable.get(self.ik, [])
         # randomly select if no orthogonal rows
         if len(selectable) == 0:
             return np.random.choice(self._n_rows, p=self._p)
