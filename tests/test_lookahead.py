@@ -47,6 +47,7 @@ def test_simple_cases():
     next(iterator)
     assert 1 == iterates.ik
 
+
 def test_lookahead_case():
     A = [
         [1, 0],
