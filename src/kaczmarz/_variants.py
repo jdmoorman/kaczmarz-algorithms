@@ -47,6 +47,36 @@ class MaxDistance(kaczmarz.Base):
         return np.argmax(np.abs(residual))
 
 
+class Lookahead(kaczmarz.Base):
+    """Choose equations which leads to the most progress after a 2 step lookahead
+    """
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self._next_i = None
+
+    def _select_row_index(self, xk):
+        if self._next_i is not None:
+            temp = self._next_i
+            self._next_i = None
+            return temp
+        best_i = -1
+        self._next_i = -1
+        best_residual_norms = (float("inf"), float("inf"))
+        for ik in range(self._n_rows):
+            next_xk = self._update_iterate(self._xk, ik)
+            residual = self._b - self._A @ next_xk
+            ik2 = np.argmax(np.abs(residual))
+            next_next_xk = self._update_iterate(next_xk, ik2)
+            next_residual_norm = np.linalg.norm(self._b - self._A @ next_next_xk)
+            residual_norms = (next_residual_norm, np.linalg.norm(residual))
+            if residual_norms < best_residual_norms:
+                best_i = ik
+                self._next_i = ik2
+                best_residual_norms = residual_norms
+        return best_i
+
+
 class Random(kaczmarz.Base):
     """Sample equations according to a `fixed` probability distribution.
 

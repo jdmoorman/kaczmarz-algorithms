@@ -15,6 +15,7 @@ from ._abc import Base
 from ._variants import (
     Cyclic,
     MaxDistance,
+    Lookahead,
     Quantile,
     Random,
     RandomOrthoGraph,
