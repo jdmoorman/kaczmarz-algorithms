@@ -29,26 +29,8 @@ class Cyclic(kaczmarz.Base):
         return self._row_index
 
 
-class MaxDistance(kaczmarz.Base):
-    """Choose equations which leads to the most progress.
-
-    This selection strategy is also known as `Motzkin's method`.
-
-    References
-    ----------
-    1. T. S. Motzkin and I. J. Schoenberg.
-       "The relaxation method for linear inequalities."
-       *Canadian Journal of Mathematics*, 6:393–404, 1954.
-    """
-
-    def _select_row_index(self, xk):
-        # TODO: use auxiliary update for the residual.
-        residual = self._b - self._A @ self._xk
-        return np.argmax(np.abs(residual))
-
-
 class Lookahead(kaczmarz.Base):
-    """Choose equations which leads to the most progress after a 2 step lookahead
+    """Choose equations which lead to the most progress after a 2 step lookahead
     """
 
     def __init__(self, *base_args, **base_kwargs):
@@ -75,6 +57,24 @@ class Lookahead(kaczmarz.Base):
                 self._next_i = ik2
                 best_residual_norms = residual_norms
         return best_i
+
+
+class MaxDistance(kaczmarz.Base):
+    """Choose equations which leads to the most progress.
+
+    This selection strategy is also known as `Motzkin's method`.
+
+    References
+    ----------
+    1. T. S. Motzkin and I. J. Schoenberg.
+       "The relaxation method for linear inequalities."
+       *Canadian Journal of Mathematics*, 6:393–404, 1954.
+    """
+
+    def _select_row_index(self, xk):
+        # TODO: use auxiliary update for the residual.
+        residual = self._b - self._A @ self._xk
+        return np.argmax(np.abs(residual))
 
 
 class Random(kaczmarz.Base):
