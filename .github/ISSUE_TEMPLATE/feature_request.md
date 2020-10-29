@@ -7,17 +7,6 @@ assignees: ''
 
 ---
 
-## Use Case
-*Please provide a use case to help us understand your request in context*
+## Description
+*Please describe your desired feature*
 
-
-
-
-## Solution
-*Please describe your ideal solution*
-
-
-
-
-## Alternatives
-*Please describe any alternatives you've considered, even if you've dismissed them*
