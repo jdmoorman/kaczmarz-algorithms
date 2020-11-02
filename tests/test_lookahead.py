@@ -11,7 +11,7 @@ def test_simple_cases():
     ]
     b = [1, 2, 3]
     x0 = [0, 0, 0]
-    iterator = iter(kaczmarz.Lookahead.iterates(A, b, x0))
+    iterator = iter(kaczmarz.MaxDistanceLookahead.iterates(A, b, x0))
     assert [0, 0, 0] == list(next(iterator))
     assert [0, 0, 3] == list(next(iterator))
     assert [0, 2, 3] == list(next(iterator))
@@ -26,7 +26,7 @@ def test_simple_cases():
     ]
     b = [1, 1, 1]
     x0 = [0, 0, 0]
-    iterator = iter(kaczmarz.Lookahead.iterates(A, b, x0))
+    iterator = iter(kaczmarz.MaxDistanceLookahead.iterates(A, b, x0))
     assert [0, 0, 0] == list(next(iterator))
     assert [1, 0, 0] == list(next(iterator))
     assert [1, 0.5, 0] == list(next(iterator))
@@ -41,7 +41,7 @@ def test_simple_cases():
     ]
     b = [3, 4, 3]
     x0 = [1, 1, 1]
-    iterates = kaczmarz.Lookahead.iterates(A, b, x0)
+    iterates = kaczmarz.MaxDistanceLookahead.iterates(A, b, x0)
     iterator = iter(iterates)
     next(iterator)
     next(iterator)
@@ -56,7 +56,7 @@ def test_lookahead_case():
     ]
     b = [0, 0, 0]
     x0 = [1, -0.5]
-    iterates = kaczmarz.Lookahead.iterates(A, b, x0)
+    iterates = kaczmarz.MaxDistanceLookahead.iterates(A, b, x0)
     iterator = iter(iterates)
     assert [1, -0.5] == list(next(iterator))
     assert [0, -0.5] == list(next(iterator))

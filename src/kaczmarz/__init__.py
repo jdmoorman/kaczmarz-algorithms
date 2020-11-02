@@ -14,7 +14,7 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 from ._abc import Base
 from ._variants import (
     Cyclic,
-    Lookahead,
+    MaxDistanceLookahead,
     MaxDistance,
     Quantile,
     Random,

@@ -31,7 +31,7 @@ class Cyclic(kaczmarz.Base):
         return self._row_index
 
 
-class Lookahead(kaczmarz.Base):
+class MaxDistanceLookahead(kaczmarz.Base):
     """Choose equations which lead to the most progress after a 2 step lookahead
     """
 
