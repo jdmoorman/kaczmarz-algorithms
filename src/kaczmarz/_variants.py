@@ -6,7 +6,8 @@ import numpy as np
 from scipy import sparse
 
 import kaczmarz
-from ._utils import scale_rows, scale_cols, square
+
+from ._utils import scale_cols, scale_rows, square
 
 
 class Cyclic(kaczmarz.Base):
