@@ -210,25 +210,26 @@ class RandomOrthoGraph(kaczmarz.Base):
 
     def __init__(self, *args, p=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self._ortho_graph = self._A @ self._A.T
+        self._gramian = self._A @ self._A.T
 
-        self._i_to_newly_selectable = {
-            i: self._newly_selectable(i) for i in range(self._n_rows)
+        self._i_to_neighbors = {
+            i: np.argwhere(self._gramian[i, :]).flatten() for i in range(self._n_rows)
         }
 
         self._selectable = np.argwhere(self._A @ self._x0 - self._b).flatten()
         if p is None:
             p = np.ones((self._n_rows,))
         self._p = p
-
-    def _newly_selectable(self, i):
-        return np.argwhere(self._ortho_graph[i, :])
+#        print(self._i_to_neighbors)
 
     def _update_selectable(self, ik):
         # Every time a row is selected, all of its neighbors become selectable, and itself becomes unselectable.
-        newly_selectable = self._i_to_newly_selectable[ik]
+#        print("updating:", ik)
+        newly_selectable = self._i_to_neighbors[ik]
+#        print(newly_selectable )
         selectable_with_ik = np.union1d(self._selectable, newly_selectable)
         self._selectable = np.setdiff1d(selectable_with_ik, [ik], assume_unique=True)
+#        print(self._selectable)
 
     def _select_row_index(self, xk):
         unnormalized_p = self._p[self._selectable]
@@ -239,7 +240,5 @@ class RandomOrthoGraph(kaczmarz.Base):
 
     @property
     def selectable(self):
-        """(k,) array: selectable rows at the current iteration
-        k <= n, number of rows
-        """
+        """(s,) array: Selectable row indexes at the current iteration."""
         return self._selectable.copy()
