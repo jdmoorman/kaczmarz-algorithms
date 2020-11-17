@@ -212,26 +212,25 @@ class RandomOrthoGraph(kaczmarz.Base):
         super().__init__(*args, **kwargs)
         self._gramian = self._A @ self._A.T
 
+        # Map each row index i to indexes of rows that are NOT orthogonal to it.
         self._i_to_neighbors = {
             i: np.argwhere(self._gramian[i, :]).flatten() for i in range(self._n_rows)
         }
 
+        # Initially, any row whose equation is not satisfied is selectable.
         self._selectable = np.argwhere(self._A @ self._x0 - self._b).flatten()
         if p is None:
             p = np.ones((self._n_rows,))
         self._p = p
-#        print(self._i_to_neighbors)
 
     def _update_selectable(self, ik):
         # Every time a row is selected, all of its neighbors become selectable, and itself becomes unselectable.
-#        print("updating:", ik)
         newly_selectable = self._i_to_neighbors[ik]
-#        print(newly_selectable )
         selectable_with_ik = np.union1d(self._selectable, newly_selectable)
         self._selectable = np.setdiff1d(selectable_with_ik, [ik], assume_unique=True)
-#        print(self._selectable)
 
     def _select_row_index(self, xk):
+        print("Here we are")
         unnormalized_p = self._p[self._selectable]
         p = unnormalized_p / unnormalized_p.sum()
         ik = np.random.choice(self._selectable, p=p)
