@@ -230,7 +230,6 @@ class RandomOrthoGraph(kaczmarz.Base):
         self._selectable = np.setdiff1d(selectable_with_ik, [ik], assume_unique=True)
 
     def _select_row_index(self, xk):
-        print("Here we are")
         unnormalized_p = self._p[self._selectable]
         p = unnormalized_p / unnormalized_p.sum()
         ik = np.random.choice(self._selectable, p=p)
