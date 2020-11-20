@@ -45,10 +45,9 @@ To install Kaczmarz Algorithms, run this command in your terminal:
 $ pip install -U kaczmarz-algorithms
 ```
 
-This is the preferred method to install Kaczmarz Algorithms, as it will always install the most recent stable release.
+The `-U` argument is optional. It specifies that the most package should be upgraded to the most recent version if it is already installed.
 
-If you don't have [pip](https://pip.pypa.io) installed, these [installation instructions](http://docs.python-guide.org/en/latest/starting/installation/) can guide
-you through the process.
+If you don't have [pip](https://pip.pypa.io) installed, these [installation instructions](http://docs.python-guide.org/en/latest/starting/installation/) can guide you through the process.
 
 ## Usage
 
