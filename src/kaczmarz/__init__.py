@@ -12,10 +12,9 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 
 from ._abc import Base
-from ._variants import (
+from ._variants import (  # OrthogonalMaxDistance,
     Cyclic,
     MaxDistance,
-#    OrthogonalMaxDistance,
     Quantile,
     Random,
     RandomOrthoGraph,
