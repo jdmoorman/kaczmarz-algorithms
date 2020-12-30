@@ -240,3 +240,29 @@ class RandomOrthoGraph(kaczmarz.Base):
     def selectable(self):
         """(s,) array: Selectable row indexes at the current iteration."""
         return self._selectable.copy()
+
+
+class BiasedOrthoGraph(RandomOrthoGraph):
+    """Try to only sample equations which are not already satisfied.
+
+    Bias the chosen equations toward those whose neighbors in the orthogonality graph have been sampled more recently.
+
+    Parameters
+    ----------
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # The iteration on which a neighbor of each row was last used.
+        self._ages = np.zeros(self._n_rows)
+
+    def _update_ages(self, ik):
+        neighbors = self._i_to_neighbors[ik]
+        self._ages[neighbors] = self._k
+
+    def _select_row_index(self, xk):
+        ik = np.random.choice(self._selectable)
+        self._update_selectable(ik)
+        self._update_ages(ik)
+        return ik
