@@ -33,8 +33,7 @@ class Cyclic(kaczmarz.Base):
 
 
 class MaxDistanceLookahead(kaczmarz.Base):
-    """Choose equations which lead to the most progress after a 2 step lookahead
-    """
+    """Choose equations which lead to the most progress after a 2 step lookahead"""
 
     def __init__(self, *base_args, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
