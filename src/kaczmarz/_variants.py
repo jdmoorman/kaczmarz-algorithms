@@ -3,8 +3,11 @@
 from collections import deque
 
 import numpy as np
+from scipy import sparse
 
 import kaczmarz
+
+from ._utils import scale_cols, scale_rows, square
 
 
 class Cyclic(kaczmarz.Base):
@@ -31,6 +34,37 @@ class Cyclic(kaczmarz.Base):
     def _select_row_index(self, xk):
         self._row_index = (1 + self._row_index) % self._n_rows
         return self._order[self._row_index]
+
+
+class MaxDistanceLookahead(kaczmarz.Base):
+    """Choose equations which lead to the most progress after a 2 step lookahead."""
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self._next_i = None
+        self._gramian = self._A @ self._A.T
+        self._gramian2 = square(self._gramian)
+
+    def _select_row_index(self, xk):
+        if self._next_i is not None:
+            temp = self._next_i
+            self._next_i = None
+            return temp
+
+        residual = self._b - self._A @ xk
+        residual_2 = np.square(residual)
+        cost_mat = np.array(
+            residual_2[:, None]
+            + residual_2[None, :]
+            - 2 * scale_rows(scale_cols(self._gramian, residual), residual)
+            + scale_rows(self._gramian2, residual_2)
+        )
+        best_cost = np.max(cost_mat)
+
+        sort_idxs = np.argsort(residual_2)[::-1]
+        best_i = sort_idxs[np.any(cost_mat[sort_idxs, :] == best_cost, axis=1)][0]
+        self._next_i = np.argwhere(cost_mat[best_i] == best_cost)[0][0]
+        return best_i
 
 
 class MaxDistance(kaczmarz.Base):
