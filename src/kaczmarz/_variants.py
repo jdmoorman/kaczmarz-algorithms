@@ -38,8 +38,8 @@ class MaxDistanceLookahead(kaczmarz.Base):
     def __init__(self, *base_args, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
         self._next_i = None
-        self._gram = self._A @ self._A.T
-        self._gram2 = square(self._gram)
+        self._gramian = self._A @ self._A.T
+        self._gramian2 = square(self._gramian)
 
     def _select_row_index(self, xk):
         if self._next_i is not None:
@@ -52,8 +52,8 @@ class MaxDistanceLookahead(kaczmarz.Base):
         cost_mat = np.array(
             residual_2[:, None]
             + residual_2[None, :]
-            - 2 * scale_rows(scale_cols(self._gram, residual), residual)
-            + scale_rows(self._gram2, residual_2)
+            - 2 * scale_rows(scale_cols(self._gramian, residual), residual)
+            + scale_rows(self._gramian2, residual_2)
         )
         best_cost = np.max(cost_mat)
 
