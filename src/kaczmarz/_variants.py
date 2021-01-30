@@ -81,7 +81,7 @@ class MaxDistance(kaczmarz.Base):
 
     def _select_row_index(self, xk):
         # TODO: use auxiliary update for the residual.
-        residual = self._b - self._A @ xk
+        residual = self._b - self._A @ self._xk
         return np.argmax(np.abs(residual))
 
 

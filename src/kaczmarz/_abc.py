@@ -234,7 +234,7 @@ class Base(ABC):
         if self._k >= self._maxiter:
             return True
 
-        residual = self._b - self._A @ xk
+        residual = self._b - self._A @ self._xk
         residual_norm = np.linalg.norm(residual)
 
         if residual_norm < self._tol:
