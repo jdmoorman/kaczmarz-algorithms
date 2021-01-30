@@ -277,3 +277,70 @@ class RandomOrthoGraph(kaczmarz.Base):
     def selectable(self):
         """(s,) array: Selectable row indexes at the current iteration."""
         return self._selectable.copy()
+
+class ParallelOrthoUpdate(kaczmarz.Base):
+    """Perform multiple updates in parallel, using only rows which are mutually orthogonal
+
+    Parameters
+    ----------
+
+    References
+    ----------
+    1. Nutini, Julie, et al.
+       "Convergence rates for greedy Kaczmarz algorithms,
+       and faster randomized Kaczmarz rules using the orthogonality graph."
+       arXiv preprint arXiv:1612.07838 2016.
+    """
+
+    def __init__(self, *args, q=None, p=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._gramian = self._A @ self._A.T
+
+        # Map each row index i to indexes of rows that are NOT orthogonal to it.
+        self._i_to_neighbors = {
+            i: np.argwhere(self._gramian[i, :]).flatten() for i in range(self._n_rows)
+        }
+
+        if q is None:
+            q = 1
+        self._q = q
+        if p is None:
+            squared_row_norms = self._row_norms ** 2
+            p = squared_row_norms / squared_row_norms.sum()
+        self._p = p
+        self._clique_sizes = []
+
+    def _update_iterate(self, xk, ik_list):
+        xkp1 = xk
+        self._clique_sizes.append(len(ik_list))
+        for ik in ik_list:
+            ai = self._A[ik]
+            bi = self._b[ik]
+            xkp1 += (bi - ai @ xk) * ai
+        return xkp1
+
+    def _update_selectable(self, selectable, ik):
+        """Remove all rows from selectable set that are not orthogonal to ik"""
+        selectable[self._gramian[ik] != 0] = False
+
+    def _select_row_index(self, xk):
+        ik_list = []
+        selectable = np.ones(self._n_rows, dtype=np.bool)
+        curr_p = self._p.copy()
+        while len(ik_list) != self._q:
+            ik = np.random.choice(self._n_rows, p=curr_p)
+            if not selectable[ik]:
+                raise Exception(
+                    "Probability removal should prevent this from happening"
+                )
+            ik_list.append(ik)
+            self._update_selectable(selectable, ik)
+            if np.any(selectable):
+                new_p = np.zeros(self._n_rows)
+                new_p[selectable] = curr_p[selectable]
+                new_p /= np.sum(new_p)  # Renormalize probabilities
+                curr_p = new_p
+            else:
+                break
+
+        return ik_list
