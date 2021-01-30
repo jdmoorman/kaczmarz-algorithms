@@ -23,13 +23,16 @@ class Cyclic(kaczmarz.Base):
        Série A, Sciences Mathématiques*, 35, 335–357, 1937
     """
 
-    def __init__(self, *base_args, **base_kwargs):
+    def __init__(self, *base_args, order=None, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
         self._row_index = -1
+        if order is None:
+            order = range(self._n_rows)
+        self._order = order
 
     def _select_row_index(self, xk):
         self._row_index = (1 + self._row_index) % self._n_rows
-        return self._row_index
+        return self._order[self._row_index]
 
 
 class MaxDistanceLookahead(kaczmarz.Base):
