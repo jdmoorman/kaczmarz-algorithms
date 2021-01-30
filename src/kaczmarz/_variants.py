@@ -294,7 +294,7 @@ class ParallelOrthoUpdate(kaczmarz.Base):
 
     def __init__(self, *args, q=None, p=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self._gramian = self._A @ self._A.T
+        self._gramian = np.array(self._A @ self._A.T)
 
         # Map each row index i to indexes of rows that are NOT orthogonal to it.
         self._i_to_neighbors = {
