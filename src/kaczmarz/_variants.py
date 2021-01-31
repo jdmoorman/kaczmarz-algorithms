@@ -282,17 +282,8 @@ class ParallelOrthoUpdate(RandomOrthoGraph):
 
     Parameters
     ----------
-    p : int, optional
-        Probability of sampling each row.
     q : int, optional
         Maximum number of updates to do in parallel.
-
-    References
-    ----------
-    1. Nutini, Julie, et al.
-       "Convergence rates for greedy Kaczmarz algorithms,
-       and faster randomized Kaczmarz rules using the orthogonality graph."
-       arXiv preprint arXiv:1612.07838 2016.
     """
 
     def __init__(self, *args, q=None, **kwargs):
