@@ -324,10 +324,6 @@ class ParallelOrthoUpdate(kaczmarz.Base):
         curr_p = self._p.copy()
         while len(ik_list) != self._q:
             ik = np.random.choice(self._n_rows, p=curr_p)
-            if not selectable[ik]:
-                raise Exception(
-                    "Probability removal should prevent this from happening"
-                )
             ik_list.append(ik)
             # Remove all rows from selectable set that are not orthogonal to ik
             selectable[self._i_to_neighbors[ik]] = False
