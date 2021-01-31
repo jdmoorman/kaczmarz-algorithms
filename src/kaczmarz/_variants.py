@@ -305,8 +305,7 @@ class ParallelOrthoUpdate(kaczmarz.Base):
             q = self._n_rows
         self._q = q
         if p is None:
-            squared_row_norms = self._row_norms ** 2
-            p = squared_row_norms / squared_row_norms.sum()
+            p = np.ones((self._n_rows,))
         self._p = p
         self._clique_sizes = []
 
