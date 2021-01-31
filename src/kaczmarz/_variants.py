@@ -312,32 +312,26 @@ class ParallelOrthoUpdate(kaczmarz.Base):
             p = np.ones((self._n_rows,))
         self._p = p
 
-    def _update_iterate(self, xk, ik_list):
+    def _update_iterate(self, xk, tauk):
         """Do a sum of the usual updates."""
         # TODO: We should implement averaged kaczmarz as a mixin or something.
         xkp1 = xk
-        for ik in ik_list:
-            ai = self._A[ik]
-            bi = self._b[ik]
-            xkp1 += (bi - ai @ xk) * ai
+        for i in tauk:
+            xkp1 = super()._update_iterate(xkp1, i)
         return xkp1
 
     def _select_row_index(self, xk):
         """Select a group of mutually orthogonal rows to project onto."""
-        ik_list = []
+        tauk = []
         selectable = np.ones(self._n_rows, dtype=np.bool)
         curr_p = self._p.copy()
-        while len(ik_list) != self._q:
-            ik = np.random.choice(self._n_rows, p=curr_p)
-            ik_list.append(ik)
-            # Remove all rows from selectable set that are not orthogonal to ik
-            selectable[self._i_to_neighbors[ik]] = False
-            if np.any(selectable):
-                new_p = np.zeros(self._n_rows)
-                new_p[selectable] = curr_p[selectable]
-                new_p /= np.sum(new_p)  # Renormalize probabilities
-                curr_p = new_p
-            else:
-                break
+        while len(tauk) != self._q and np.any(selectable):
+            curr_p[~selectable] = 0 # Don't want to sample unselectable entries
+            curr_p /= curr_p.sum() # Renormalize probabilities
 
-        return ik_list
+            i = np.random.choice(self._n_rows, p=curr_p)
+            tauk.append(i)
+
+            # Remove rows from selectable set that are not orthogonal to i
+            selectable[self._i_to_neighbors[i]] = False
+        return tauk
