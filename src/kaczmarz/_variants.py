@@ -276,6 +276,7 @@ class RandomOrthoGraph(kaczmarz.Base):
         """(s,) array(bool): Selectable rows at the current iteration."""
         return self._selectable.copy()
 
+
 class ParallelOrthoUpdate(RandomOrthoGraph):
     """Perform multiple updates in parallel, using only rows which are mutually orthogonal
 
@@ -315,8 +316,8 @@ class ParallelOrthoUpdate(RandomOrthoGraph):
         tauk = []
         curr_p = self._p.copy()
         while len(tauk) != self._q and np.any(curr_selectable):
-            curr_p[~curr_selectable] = 0 # Don't want to sample unselectable entries
-            curr_p /= curr_p.sum() # Renormalize probabilities
+            curr_p[~curr_selectable] = 0  # Don't want to sample unselectable entries
+            curr_p /= curr_p.sum()  # Renormalize probabilities
 
             i = np.random.choice(self._n_rows, p=curr_p)
             tauk.append(i)
