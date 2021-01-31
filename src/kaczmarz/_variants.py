@@ -292,7 +292,7 @@ class ParallelOrthoUpdate(kaczmarz.Base):
        arXiv preprint arXiv:1612.07838 2016.
     """
 
-    def __init__(self, *args, q=None, p=None, **kwargs):
+    def __init__(self, *args, p=None, q=None, **kwargs):
         super().__init__(*args, **kwargs)
         self._gramian = self._A @ self._A.T
 
