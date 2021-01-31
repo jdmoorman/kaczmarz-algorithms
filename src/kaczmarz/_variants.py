@@ -318,10 +318,6 @@ class ParallelOrthoUpdate(kaczmarz.Base):
             xkp1 += (bi - ai @ xk) * ai
         return xkp1
 
-    def _update_selectable(self, selectable, ik):
-        """Remove all rows from selectable set that are not orthogonal to ik"""
-        selectable[self._i_to_neighbors[ik]] = False
-
     def _select_row_index(self, xk):
         ik_list = []
         selectable = np.ones(self._n_rows, dtype=np.bool)
@@ -333,7 +329,8 @@ class ParallelOrthoUpdate(kaczmarz.Base):
                     "Probability removal should prevent this from happening"
                 )
             ik_list.append(ik)
-            self._update_selectable(selectable, ik)
+            # Remove all rows from selectable set that are not orthogonal to ik
+            selectable[self._i_to_neighbors[ik]] = False
             if np.any(selectable):
                 new_p = np.zeros(self._n_rows)
                 new_p[selectable] = curr_p[selectable]
