@@ -283,6 +283,10 @@ class ParallelOrthoUpdate(kaczmarz.Base):
 
     Parameters
     ----------
+    p : int, optional
+        Probability of sampling each row.
+    q : int, optional
+        Maximum number of updates to do in parallel.
 
     References
     ----------
@@ -310,6 +314,8 @@ class ParallelOrthoUpdate(kaczmarz.Base):
         self._clique_sizes = []
 
     def _update_iterate(self, xk, ik_list):
+        """Do a sum of the usual updates."""
+        # TODO: We should implement averaged kaczmarz as a mixin or something.
         xkp1 = xk
         self._clique_sizes.append(len(ik_list))
         for ik in ik_list:
@@ -319,6 +325,7 @@ class ParallelOrthoUpdate(kaczmarz.Base):
         return xkp1
 
     def _select_row_index(self, xk):
+        """Select a group of mutually orthogonal rows to project onto."""
         ik_list = []
         selectable = np.ones(self._n_rows, dtype=np.bool)
         curr_p = self._p.copy()
