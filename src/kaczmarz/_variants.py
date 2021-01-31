@@ -302,7 +302,7 @@ class ParallelOrthoUpdate(kaczmarz.Base):
             self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
 
         if q is None:
-            q = 1
+            q = self._n_rows
         self._q = q
         if p is None:
             squared_row_norms = self._row_norms ** 2
