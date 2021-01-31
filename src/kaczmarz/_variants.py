@@ -311,13 +311,11 @@ class ParallelOrthoUpdate(kaczmarz.Base):
         if p is None:
             p = np.ones((self._n_rows,))
         self._p = p
-        self._clique_sizes = []
 
     def _update_iterate(self, xk, ik_list):
         """Do a sum of the usual updates."""
         # TODO: We should implement averaged kaczmarz as a mixin or something.
         xkp1 = xk
-        self._clique_sizes.append(len(ik_list))
         for ik in ik_list:
             ai = self._A[ik]
             bi = self._b[ik]
