@@ -297,9 +297,9 @@ class ParallelOrthoUpdate(kaczmarz.Base):
         self._gramian = self._A @ self._A.T
 
         # Map each row index i to indexes of rows that are NOT orthogonal to it.
-        self._i_to_neighbors = {
-            i: np.argwhere(self._gramian[i, :]).flatten() for i in range(self._n_rows)
-        }
+        self._i_to_neighbors = {}
+        for i in range(self._n_rows):
+            self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
 
         if q is None:
             q = 1
@@ -321,7 +321,7 @@ class ParallelOrthoUpdate(kaczmarz.Base):
 
     def _update_selectable(self, selectable, ik):
         """Remove all rows from selectable set that are not orthogonal to ik"""
-        selectable[self._gramian[ik] != 0] = False
+        selectable[self._i_to_neighbors[ik]] = False
 
     def _select_row_index(self, xk):
         ik_list = []
