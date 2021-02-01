@@ -109,7 +109,7 @@ def test_maxiter(eye23, ones2, zeros3, DummyStrategy):
     iterates = DummyStrategy.iterates(*args, maxiter=1)
     terminates_after_n_iterations(iterates, 1)
 
-    for maxiter in range(1,5):
+    for maxiter in range(1, 5):
         iterates = DummyStrategy.iterates(*args, maxiter=maxiter, tol=None)
         terminates_after_n_iterations(iterates, maxiter)
 

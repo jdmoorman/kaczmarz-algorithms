@@ -66,13 +66,17 @@ class Base(ABC):
                 # For well matrices with condition number<10, 1/10*min(self._A.shape) lower bounds the minimum singular value.
                 maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(self._A.shape)))
             else:
-                raise ValueError("At least one of ``tol`` or ``maxiter`` must be specified.")
+                raise ValueError(
+                    "At least one of ``tol`` or ``maxiter`` must be specified."
+                )
         self._tol = tol
         self._maxiter = maxiter
 
         if callback is None:
+
             def callback(xk):
                 return None
+
         self._callback = callback
 
         self._k = -1
