@@ -244,7 +244,7 @@ class Base(ABC):
             return True
 
         if self._tol is not None:
-            residual = self._b - self._A @ self._xk
+            residual = self._b - self._A @ xk
             residual_norm = np.linalg.norm(residual)
 
             if residual_norm < self._tol:
