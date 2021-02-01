@@ -101,12 +101,20 @@ def test_maxiter(eye23, ones2, zeros3, DummyStrategy):
     """Passing ``maxiter=n`` should cause the algorithm to terminate after n iterations."""
 
     # [0, 0, 0] is not the exact solution.
+    args = [eye23, ones2, zeros3]
 
-    iterates = DummyStrategy.iterates(eye23, ones2, zeros3, maxiter=0)
+    iterates = DummyStrategy.iterates(*args, maxiter=0)
     terminates_after_n_iterations(iterates, 0)
 
-    iterates = DummyStrategy.iterates(eye23, ones2, zeros3, maxiter=1)
+    iterates = DummyStrategy.iterates(*args, maxiter=1)
     terminates_after_n_iterations(iterates, 1)
+
+    for maxiter in range(1, 5):
+        iterates = DummyStrategy.iterates(*args, maxiter=maxiter, tol=None)
+        terminates_after_n_iterations(iterates, maxiter)
+
+    with pytest.raises(ValueError):
+        iterates = DummyStrategy.iterates(*args, maxiter=None, tol=None)
 
 
 def test_solve(eye23, ones2, zeros3, DummyStrategy):

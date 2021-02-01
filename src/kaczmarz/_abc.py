@@ -22,9 +22,9 @@ class Base(ABC):
     x0 : (n,) or (n, 1) array_like, optional
         Starting guess for the solution.
     tol : float, optional
-        Tolerance for convergence, ``norm(normalized_residual) <= tol``.
+        Tolerance for convergence, ``norm(normalized_residual) <= tol``. Pass ``None`` to ignore the tolerance.
     maxiter : int or float, optional
-        Maximum number of iterations.
+        Maximum number of iterations. At least one of ``tol`` or ``maxiter`` must be passed.
     callback : function, optional
         User-supplied function to call after each iteration.
         It is called as ``callback(xk)``,
@@ -56,20 +56,29 @@ class Base(ABC):
         else:
             x0 = np.array(x0, dtype="float64")
             self._iterate_shape = x0.shape
-
         self._x0 = x0.ravel()
-        self._tol = tol
 
         if maxiter is None:
-            maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(self._A.shape)))
-
+            if tol is not None:
+                # TODO: Incorporate the initial error somehow, perhaps through the initial residual.
+                # TODO: Explain where this comes from.
+                # 1/min(self._A.shape) lower bounds the maximum singular value/sum of singular values.
+                # For well matrices with condition number<10, 1/10*min(self._A.shape) lower bounds the minimum singular value.
+                maxiter = 2 * np.log(tol) / np.log(1 - 1 / (10 * min(self._A.shape)))
+            else:
+                raise ValueError(
+                    "At least one of ``tol`` or ``maxiter`` must be specified."
+                )
+        self._tol = tol
         self._maxiter = maxiter
+
         if callback is None:
 
             def callback(xk):
                 return None
 
         self._callback = callback
+
         self._k = -1
         self._ik = -1
         self._xk = None
@@ -234,10 +243,11 @@ class Base(ABC):
         if self._k >= self._maxiter:
             return True
 
-        residual = self._b - self._A @ self._xk
-        residual_norm = np.linalg.norm(residual)
+        if self._tol is not None:
+            residual = self._b - self._A @ xk
+            residual_norm = np.linalg.norm(residual)
 
-        if residual_norm < self._tol:
-            return True
+            if residual_norm < self._tol:
+                return True
 
         return False
