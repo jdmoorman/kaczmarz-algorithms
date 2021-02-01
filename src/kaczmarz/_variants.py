@@ -250,30 +250,73 @@ class RandomOrthoGraph(kaczmarz.Base):
         self._gramian = self._A @ self._A.T
 
         # Map each row index i to indexes of rows that are NOT orthogonal to it.
-        self._i_to_neighbors = {
-            i: np.argwhere(self._gramian[i, :]).flatten() for i in range(self._n_rows)
-        }
-
-        # Initially, any row whose equation is not satisfied is selectable.
-        self._selectable = np.argwhere(self._A @ self._x0 - self._b).flatten()
+        self._i_to_neighbors = {}
+        for i in range(self._n_rows):
+            self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
         if p is None:
             p = np.ones((self._n_rows,))
         self._p = p
 
+        self._selectable = self._A @ self._x0 - self._b != 0
+
     def _update_selectable(self, ik):
-        # Every time a row is selected, all of its neighbors become selectable, and itself becomes unselectable.
-        newly_selectable = self._i_to_neighbors[ik]
-        selectable_with_ik = np.union1d(self._selectable, newly_selectable)
-        self._selectable = np.setdiff1d(selectable_with_ik, [ik], assume_unique=True)
+        self._selectable[self._i_to_neighbors[ik]] = True
+        self._selectable[ik] = False
 
     def _select_row_index(self, xk):
-        unnormalized_p = self._p[self._selectable]
-        p = unnormalized_p / unnormalized_p.sum()
-        ik = np.random.choice(self._selectable, p=p)
+        p = self._p.copy()
+        p[~self._selectable] = 0
+        p /= p.sum()
+        ik = np.random.choice(self._n_rows, p=p)
         self._update_selectable(ik)
         return ik
 
     @property
     def selectable(self):
-        """(s,) array: Selectable row indexes at the current iteration."""
+        """(s,) array(bool): Selectable rows at the current iteration."""
         return self._selectable.copy()
+
+
+class ParallelOrthoUpdate(RandomOrthoGraph):
+    """Perform multiple updates in parallel, using only rows which are mutually orthogonal
+
+    Parameters
+    ----------
+    q : int, optional
+        Maximum number of updates to do in parallel.
+    """
+
+    def __init__(self, *args, q=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if q is None:
+            q = self._n_rows
+        self._q = q
+
+    def _update_iterate(self, xk, tauk):
+        """Do a sum of the usual updates."""
+        # TODO: We should implement averaged kaczmarz as a mixin or something.
+        xkp1 = xk
+        for i in tauk:
+            xkp1 = super()._update_iterate(xkp1, i)
+        return xkp1
+
+    def _select_row_index(self, xk):
+        """Select a group of mutually orthogonal rows to project onto."""
+        curr_selectable = self._selectable.copy()  # Equations that are not satisfied.
+        tauk = []
+        curr_p = self._p.copy()
+        while len(tauk) != self._q and np.any(curr_selectable):
+            curr_p[~curr_selectable] = 0  # Don't want to sample unselectable entries
+            curr_p /= curr_p.sum()  # Renormalize probabilities
+
+            i = np.random.choice(self._n_rows, p=curr_p)
+            tauk.append(i)
+
+            # Remove rows from selectable set that are not orthogonal to i
+            curr_selectable[self._i_to_neighbors[i]] = False
+
+        for i in tauk:
+            self._update_selectable(i)
+
+        return tauk
