@@ -254,15 +254,29 @@ class BiasedOrthoGraph(RandomOrthoGraph):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # The iteration on which a neighbor of each row was last used.
-        self._ages = np.zeros(self._n_rows)
+        # TODO: pick a better name for this variable.
+        # How long has it been since a neighbor of each row was sampled.
+        self._ages = np.ones(self._n_rows)
+
+        # Suppose it's iteration 10
+        # ages: [1 1 1 2 2 2 3 3 4]
+        # apply some function to k - recentness
+        # 1 / (k - recentness)
+        # unnormalized probs: [5 5 5 4 4 4 3 3 2]
+
+    def _biased_unnormalized_probs(self, ages):
+        return 1 / ages
 
     def _update_ages(self, ik):
         neighbors = self._i_to_neighbors[ik]
-        self._ages[neighbors] = self._k
+        self._ages[neighbors] = 0
+        self._ages += 1
 
     def _select_row_index(self, xk):
-        ik = np.random.choice(self._selectable)
+        unnormalized_p = self._biased_unnormalized_probs(self._ages)
+        unnormalized_p = unnormalized_p[self._selectable]
+        p = unnormalized_p / unnormalized_p.sum()
+        ik = np.random.choice(self._selectable, p=p)
         self._update_selectable(ik)
         self._update_ages(ik)
         return ik
