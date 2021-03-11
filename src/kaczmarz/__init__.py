@@ -13,14 +13,16 @@ __copyright__ = "Copyright (c) 2020, Jacob Moorman"
 
 from ._abc import Base
 from ._variants import (  # OrthogonalMaxDistance,
+    BiasedOrthoGraph,
     Cyclic,
     MaxDistance,
     MaxDistanceLookahead,
     ParallelOrthoUpdate,
+    PrioritizeYoungestRows,
     Quantile,
     Random,
-    RandomOrthoGraph,
     SampledQuantile,
+    SelectableSet,
     SVRandom,
     UniformRandom,
     WindowedQuantile,

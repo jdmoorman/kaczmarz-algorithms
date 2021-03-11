@@ -224,7 +224,7 @@ class WindowedQuantile(Quantile):
         return self._window
 
 
-class RandomOrthoGraph(kaczmarz.Base):
+class SelectableSet(kaczmarz.Base):
     """Try to only sample equations which are not already satisfied.
 
     Use the orthogonality graph defined in [1] to decide which rows should
@@ -259,12 +259,15 @@ class RandomOrthoGraph(kaczmarz.Base):
 
         self._selectable = self._A @ self._x0 - self._b != 0
 
+    def _base_probs(self):
+        return self._p.copy()
+
     def _update_selectable(self, ik):
         self._selectable[self._i_to_neighbors[ik]] = True
         self._selectable[ik] = False
 
     def _select_row_index(self, xk):
-        p = self._p.copy()
+        p = self._base_probs()
         p[~self._selectable] = 0
         p /= p.sum()
         ik = np.random.choice(self._n_rows, p=p)
@@ -277,7 +280,7 @@ class RandomOrthoGraph(kaczmarz.Base):
         return self._selectable.copy()
 
 
-class BiasedOrthoGraph(RandomOrthoGraph):
+class BiasedOrthoGraph(SelectableSet):
     """Try to only sample equations which are not already satisfied.
 
     Bias the chosen equations toward those whose neighbors in the orthogonality graph have been sampled more recently.
@@ -293,14 +296,8 @@ class BiasedOrthoGraph(RandomOrthoGraph):
         # How long has it been since a neighbor of each row was sampled.
         self._ages = np.ones(self._n_rows)
 
-        # Suppose it's iteration 10
-        # ages: [1 1 1 2 2 2 3 3 4]
-        # apply some function to k - recentness
-        # 1 / (k - recentness)
-        # unnormalized probs: [5 5 5 4 4 4 3 3 2]
-
-    def _biased_unnormalized_probs(self, ages):
-        return 1 / ages
+    def _base_probs(self):
+        return self._p / self._ages
 
     def _update_ages(self, ik):
         neighbors = self._i_to_neighbors[ik]
@@ -308,16 +305,23 @@ class BiasedOrthoGraph(RandomOrthoGraph):
         self._ages += 1
 
     def _select_row_index(self, xk):
-        unnormalized_p = self._biased_unnormalized_probs(self._ages)
-        unnormalized_p = unnormalized_p[self._selectable]
-        p = unnormalized_p / unnormalized_p.sum()
-        ik = np.random.choice(self._selectable, p=p)
-        self._update_selectable(ik)
+        ik = super()._select_row_index(xk)
         self._update_ages(ik)
         return ik
 
 
-class ParallelOrthoUpdate(RandomOrthoGraph):
+class PrioritizeYoungestRows(BiasedOrthoGraph):
+    def __init__(self, *args, bias=2, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._bias = bias
+
+    def _base_probs(self):
+        p = self._p.copy()
+        p[self._ages == 1] *= self._bias
+        return p
+
+
+class ParallelOrthoUpdate(SelectableSet):
     """Perform multiple updates in parallel, using only rows which are mutually orthogonal
 
     Parameters
