@@ -260,6 +260,7 @@ class SelectableSet(kaczmarz.Base):
         self._selectable = self._A @ self._x0 - self._b != 0
 
     def _base_probs(self):
+        """Return a list of probabilities to be used for selecting rows."""
         return self._p.copy()
 
     def _update_selectable(self, ik):
@@ -281,12 +282,9 @@ class SelectableSet(kaczmarz.Base):
 
 
 class BiasedOrthoGraph(SelectableSet):
-    """Try to only sample equations which are not already satisfied.
+    """Sample equations whose neighbors have been sampled recently more often.
 
-    Bias the chosen equations toward those whose neighbors in the orthogonality graph have been sampled more recently.
-
-    Parameters
-    ----------
+    Override `_base_probs` in a subclass to define your own biased method.
     """
 
     def __init__(self, *args, **kwargs):
@@ -311,6 +309,14 @@ class BiasedOrthoGraph(SelectableSet):
 
 
 class PrioritizeYoungestRows(BiasedOrthoGraph):
+    """Sample equations that are neighbors of the most recently used row more often.
+
+    Parameters
+    ----------
+    bias : float
+        How much more often should neighbors of the most recently used row be sampled?
+    """
+
     def __init__(self, *args, bias=2, **kwargs):
         super().__init__(*args, **kwargs)
         self._bias = bias
@@ -346,7 +352,6 @@ class ParallelOrthoUpdate(SelectableSet):
         return xkp1
 
     def _select_row_index(self, xk):
-        """Select a group of mutually orthogonal rows to project onto."""
         curr_selectable = self._selectable.copy()  # Equations that are not satisfied.
         tauk = []
         curr_p = self._p.copy()
