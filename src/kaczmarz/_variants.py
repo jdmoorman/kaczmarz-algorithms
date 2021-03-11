@@ -3,8 +3,11 @@
 from collections import deque
 
 import numpy as np
+from scipy import sparse
 
 import kaczmarz
+
+from ._utils import scale_cols, scale_rows, square
 
 
 class Cyclic(kaczmarz.Base):
@@ -20,13 +23,47 @@ class Cyclic(kaczmarz.Base):
        Série A, Sciences Mathématiques*, 35, 335–357, 1937
     """
 
-    def __init__(self, *base_args, **base_kwargs):
+    def __init__(self, *base_args, order=None, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
         self._row_index = -1
+        if order is None:
+            order = range(self._n_rows)
+        self._order = order
 
     def _select_row_index(self, xk):
         self._row_index = (1 + self._row_index) % self._n_rows
-        return self._row_index
+        return self._order[self._row_index]
+
+
+class MaxDistanceLookahead(kaczmarz.Base):
+    """Choose equations which lead to the most progress after a 2 step lookahead."""
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self._next_i = None
+        self._gramian = self._A @ self._A.T
+        self._gramian2 = square(self._gramian)
+
+    def _select_row_index(self, xk):
+        if self._next_i is not None:
+            temp = self._next_i
+            self._next_i = None
+            return temp
+
+        residual = self._b - self._A @ xk
+        residual_2 = np.square(residual)
+        cost_mat = np.array(
+            residual_2[:, None]
+            + residual_2[None, :]
+            - 2 * scale_rows(scale_cols(self._gramian, residual), residual)
+            + scale_rows(self._gramian2, residual_2)
+        )
+        best_cost = np.max(cost_mat)
+
+        sort_idxs = np.argsort(residual_2)[::-1]
+        best_i = sort_idxs[np.any(cost_mat[sort_idxs, :] == best_cost, axis=1)][0]
+        self._next_i = np.argwhere(cost_mat[best_i] == best_cost)[0][0]
+        return best_i
 
 
 class MaxDistance(kaczmarz.Base):
@@ -43,7 +80,7 @@ class MaxDistance(kaczmarz.Base):
 
     def _select_row_index(self, xk):
         # TODO: use auxiliary update for the residual.
-        residual = self._b - self._A @ self._xk
+        residual = self._b - self._A @ xk
         return np.argmax(np.abs(residual))
 
 
@@ -213,32 +250,30 @@ class RandomOrthoGraph(kaczmarz.Base):
         self._gramian = self._A @ self._A.T
 
         # Map each row index i to indexes of rows that are NOT orthogonal to it.
-        self._i_to_neighbors = {
-            i: np.argwhere(self._gramian[i, :]).flatten() for i in range(self._n_rows)
-        }
-
-        # Initially, any row whose equation is not satisfied is selectable.
-        self._selectable = np.argwhere(self._A @ self._x0 - self._b).flatten()
+        self._i_to_neighbors = {}
+        for i in range(self._n_rows):
+            self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
         if p is None:
             p = np.ones((self._n_rows,))
         self._p = p
 
+        self._selectable = self._A @ self._x0 - self._b != 0
+
     def _update_selectable(self, ik):
-        # Every time a row is selected, all of its neighbors become selectable, and itself becomes unselectable.
-        newly_selectable = self._i_to_neighbors[ik]
-        selectable_with_ik = np.union1d(self._selectable, newly_selectable)
-        self._selectable = np.setdiff1d(selectable_with_ik, [ik], assume_unique=True)
+        self._selectable[self._i_to_neighbors[ik]] = True
+        self._selectable[ik] = False
 
     def _select_row_index(self, xk):
-        unnormalized_p = self._p[self._selectable]
-        p = unnormalized_p / unnormalized_p.sum()
-        ik = np.random.choice(self._selectable, p=p)
+        p = self._p.copy()
+        p[~self._selectable] = 0
+        p /= p.sum()
+        ik = np.random.choice(self._n_rows, p=p)
         self._update_selectable(ik)
         return ik
 
     @property
     def selectable(self):
-        """(s,) array: Selectable row indexes at the current iteration."""
+        """(s,) array(bool): Selectable rows at the current iteration."""
         return self._selectable.copy()
 
 
@@ -280,3 +315,48 @@ class BiasedOrthoGraph(RandomOrthoGraph):
         self._update_selectable(ik)
         self._update_ages(ik)
         return ik
+
+
+class ParallelOrthoUpdate(RandomOrthoGraph):
+    """Perform multiple updates in parallel, using only rows which are mutually orthogonal
+
+    Parameters
+    ----------
+    q : int, optional
+        Maximum number of updates to do in parallel.
+    """
+
+    def __init__(self, *args, q=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if q is None:
+            q = self._n_rows
+        self._q = q
+
+    def _update_iterate(self, xk, tauk):
+        """Do a sum of the usual updates."""
+        # TODO: We should implement averaged kaczmarz as a mixin or something.
+        xkp1 = xk
+        for i in tauk:
+            xkp1 = super()._update_iterate(xkp1, i)
+        return xkp1
+
+    def _select_row_index(self, xk):
+        """Select a group of mutually orthogonal rows to project onto."""
+        curr_selectable = self._selectable.copy()  # Equations that are not satisfied.
+        tauk = []
+        curr_p = self._p.copy()
+        while len(tauk) != self._q and np.any(curr_selectable):
+            curr_p[~curr_selectable] = 0  # Don't want to sample unselectable entries
+            curr_p /= curr_p.sum()  # Renormalize probabilities
+
+            i = np.random.choice(self._n_rows, p=curr_p)
+            tauk.append(i)
+
+            # Remove rows from selectable set that are not orthogonal to i
+            curr_selectable[self._i_to_neighbors[i]] = False
+
+        for i in tauk:
+            self._update_selectable(i)
+
+        return tauk
