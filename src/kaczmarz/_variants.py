@@ -347,8 +347,32 @@ class SubsampledMaxDistance(Random):
         return row_idxs[np.argmax(np.abs(residual))]
 
 
-class BiasedSubsampledMaxDistance(SubsampledMaxDistance):
+class SubsampledPlusNeighborsMaxDistance(SubsampledMaxDistance):
+    """Add neighbors of the most recent row to the subsample for BiasedSubsampledMaxDistance."""
+
+    def __init__(self, *base_args, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+
+        self._gramian = self._A @ self._A.T
+
+        # Map each row index i to indexes of rows that are NOT orthogonal to it.
+        self._i_to_neighbors = {}
+        for i in range(self._n_rows):
+            self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
+
+    def _get_samples(self):
+        samples = super()._get_samples()
+        if self.ik == -1:
+            neighbors = self._i_to_neighbors[self.ik]
+            # Add the neighbors to the sample.
+            samples.extend(neighbors)  # TODO: this is not a thing for numpy arrays.
+
+        return samples
+
+
+class BiasedSubsampledMaxDistance(SubsampledPlusNeighborsMaxDistance):
     """Bias the subset for SubsampledMaxDistance toward neighbors of the most recent row.
+
     Parameters
     ----------
     bias : float
@@ -359,12 +383,6 @@ class BiasedSubsampledMaxDistance(SubsampledMaxDistance):
         super().__init__(*base_args, **base_kwargs)
 
         self._bias = bias
-        self._gramian = self._A @ self._A.T
-
-        # Map each row index i to indexes of rows that are NOT orthogonal to it.
-        self._i_to_neighbors = {}
-        for i in range(self._n_rows):
-            self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
 
     def _get_samples(self):
         if self.ik == -1:
