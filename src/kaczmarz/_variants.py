@@ -362,10 +362,10 @@ class SubsampledPlusNeighborsMaxDistance(SubsampledMaxDistance):
 
     def _get_samples(self):
         samples = super()._get_samples()
-        if self.ik == -1:
+        if self.ik != -1:
             neighbors = self._i_to_neighbors[self.ik]
             # Add the neighbors to the sample.
-            samples.extend(neighbors)  # TODO: this is not a thing for numpy arrays.
+            samples = np.union1d(samples, neighbors)
 
         return samples
 
