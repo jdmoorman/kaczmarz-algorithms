@@ -95,6 +95,8 @@ class Random(kaczmarz.Base):
 
     def __init__(self, *base_args, p=None, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
+        if p is None:
+            p = np.ones(self._n_rows) / self._n_rows
         self._p = p  # p=None corresponds to uniform.
 
     def _select_row_index(self, xk):
@@ -323,7 +325,13 @@ class ParallelOrthoUpdate(RandomOrthoGraph):
 
 
 class SubsampledMaxDistance(Random):
-    """Choose the best row amongst a random subset at each iteration."""
+    """Choose the best row amongst a random subset at each iteration.
+
+    Parameters
+    ----------
+    n_samples : int
+        Numbers of rows to sample at each iteration.
+    """
 
     def __init__(self, *base_args, n_samples=1, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
@@ -337,3 +345,34 @@ class SubsampledMaxDistance(Random):
 
         residual = self._b[row_idxs] - self._A[row_idxs] @ xk
         return row_idxs[np.argmax(np.abs(residual))]
+
+
+class BiasedSubsampledMaxDistance(SubsampledMaxDistance):
+    """Bias the subset for SubsampledMaxDistance toward neighbors of the most recent row.
+    Parameters
+    ----------
+    bias : float
+        Neighbors of the most recently used row will be `bias` times extra likely to be part of the subsample.
+    """
+
+    def __init__(self, *base_args, bias=1, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+
+        self._bias = bias
+        self._gramian = self._A @ self._A.T
+
+        # Map each row index i to indexes of rows that are NOT orthogonal to it.
+        self._i_to_neighbors = {}
+        for i in range(self._n_rows):
+            self._i_to_neighbors[i] = self._gramian[[i], :].nonzero()[1]
+
+    def _get_samples(self):
+        if self.ik == -1:
+            p = self._p
+        else:
+            neighbor_idxs = self._i_to_neighbors[self.ik]
+            p = self._p.copy()
+            p[neighbor_idxs] *= self._bias
+            p /= p.sum()
+
+        return np.random.choice(self._n_rows, self._n_samples, p=p)
