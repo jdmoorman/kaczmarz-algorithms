@@ -320,3 +320,20 @@ class ParallelOrthoUpdate(RandomOrthoGraph):
             self._update_selectable(i)
 
         return tauk
+
+
+class SubsampledMaxDistance(Random):
+    """Choose the best row amongst a random subset at each iteration."""
+
+    def __init__(self, *base_args, n_samples=1, **base_kwargs):
+        super().__init__(*base_args, **base_kwargs)
+        self._n_samples = n_samples
+
+    def _get_samples(self):
+        return np.random.choice(self._n_rows, self._n_samples, p=self._p)
+
+    def _select_row_index(self, xk):
+        row_idxs = self._get_samples()
+
+        residual = self._b[row_idxs] - self._A[row_idxs] @ xk
+        return row_idxs[np.argmax(np.abs(residual))]
