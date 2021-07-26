@@ -336,12 +336,14 @@ class SubsampledMaxDistance(Random):
     def __init__(self, *base_args, n_samples=1, **base_kwargs):
         super().__init__(*base_args, **base_kwargs)
         self._n_samples = n_samples
+        self._row_idxs = []
 
     def _get_samples(self):
         return np.random.choice(self._n_rows, self._n_samples, p=self._p)
 
     def _select_row_index(self, xk):
         row_idxs = self._get_samples()
+        self._row_idxs = row_idxs
 
         residual = self._b[row_idxs] - self._A[row_idxs] @ xk
         return row_idxs[np.argmax(np.abs(residual))]
