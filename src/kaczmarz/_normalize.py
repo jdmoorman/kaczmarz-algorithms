@@ -59,6 +59,7 @@ def normalize_system(A, b):
         A = np.array(A)
 
     row_norms = compute_row_norms(A)
+    row_norms[row_norms==0] = 1
     A = normalize_matrix(A, row_norms=row_norms)
     b = np.array(b).ravel() / row_norms
 
