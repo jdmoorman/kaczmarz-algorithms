@@ -246,7 +246,9 @@ class RelaxedGreedy(kaczmarz.Base):
 
     References
     ----------
-    1.
+    1. Zhong-Zhi Bai, Wen-Ting Wu,
+    On relaxed greedy randomized Kaczmarz methods for solving large sparse linear systems,
+    Applied Mathematics Letters, Volume 83, 2018, Pages 21-26,
     """
     def __init__(self, *args, theta=0.5, **kwargs):
         super().__init__(*args, **kwargs)
