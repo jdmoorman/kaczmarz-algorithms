@@ -225,6 +225,52 @@ class WindowedQuantile(Quantile):
     def _threshold_distances(self, xk):
         return self._window
 
+class Nonrepetitive(Random):
+    """Do not sample the most recently projected row."""
+    def _select_row_index(self, xk):
+        i = super()._select_row_index(xk)
+
+        # This loops infinitely if there is only one row.
+        while i == self._ik:
+            i = super()._select_row_index(xk)
+
+        return i
+
+class RelaxedGreedy(kaczmarz.Base):
+    """Only sample equations that lead to a sufficiently large update.
+
+    Parameters
+    ----------
+    theta : float, optional
+        Parameter in the range [0,1]
+
+    References
+    ----------
+    1.
+    """
+    def __init__(self, *args, theta=0.5, **kwargs):
+        super().__init__(*args, **kwargs)
+        if theta < 0 or theta > 1:
+            raise Exception("Theta value outside parameter range [0, 1]")
+        self._theta = theta
+        self._row_norms_sq = self._row_norms **2
+        self._fro_sq = np.sum(self._row_norms_sq)
+
+    # Bai and Wu's algorithm
+    def _select_row_index(self, xk):
+        residual_sq = (self._b - self._A @ xk) ** 2
+        residual_unnormalized_sq = self._row_norms_sq * residual_sq
+        res_norm_sq = residual_unnormalized_sq.sum()
+        epsilon = self._theta / res_norm_sq * residual_sq + (1 - self._theta) / self._fro_sq
+
+        index_bool = (residual_unnormalized_sq >= epsilon * res_norm_sq * (self._row_norms_sq))
+        if ~np.any(index_bool):
+            raise Exception("Index set empty")
+
+        prob = residual_unnormalized_sq
+        prob[~index_bool] = 0
+        prob /= prob.sum()
+        return np.random.choice(self._n_rows, p=prob)
 
 class GramianSelectableSet(kaczmarz.Base):
     """Try to only sample equations which are not already satisfied.
