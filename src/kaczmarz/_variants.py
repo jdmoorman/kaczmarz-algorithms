@@ -226,7 +226,7 @@ class WindowedQuantile(Quantile):
         return self._window
 
 
-class RandomOrthoGraph(kaczmarz.Base):
+class GramianSelectableSet(kaczmarz.Base):
     """Try to only sample equations which are not already satisfied.
 
     Use the orthogonality graph defined in [1] to decide which rows should
@@ -279,7 +279,7 @@ class RandomOrthoGraph(kaczmarz.Base):
         return self._selectable.copy()
 
 
-class ParallelOrthoUpdate(RandomOrthoGraph):
+class ParallelOrthoUpdate(GramianSelectableSet):
     """Perform multiple updates in parallel, using only rows which are mutually orthogonal
 
     Parameters
