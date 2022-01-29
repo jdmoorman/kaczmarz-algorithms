@@ -16,7 +16,7 @@ test_requirements = [
     "pytest-timeout",
 ]
 
-docs_requirements = ["sphinx==1.8.5", "sphinx-rtd-theme", "m2r"]
+docs_requirements = ["sphinx", "sphinx-rtd-theme", "m2r"]
 
 setup_requirements = ["pytest-runner"]
 
